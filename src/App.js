@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-// import GoogleMap from './Map';
 import GoogleMapReact from 'google-map-react';
-// import styles from './CSS/App.module.css';
-// import { BrowserRouter as Router, Route } from 'react-router-dom';
-
+import Marker from './components/Marker';
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 class App extends Component {
@@ -23,8 +20,8 @@ class App extends Component {
           defaultCenter={this.props.center}
           defaultZoom={this.props.zoom}
         >
-          <AnyReactComponent
-            lat={59.955413}
+          <Marker
+            lat={57.955413}
             lng={30.337844}
             text="My Marker"
           />
