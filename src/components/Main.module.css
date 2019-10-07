@@ -1,0 +1,11 @@
+.grid {
+    display: grid;
+    /* grid-template-columns: 1fr 1fr 1fr; */
+    grid-template-columns: 1fr 3fr;
+    justify-content: left;
+    /* fr = 'fraction' these are adaptive  */
+    grid-column-gap: 30px;
+    grid-row-gap: 30px;
+    /* transition-duration: 2s; */
+    /* or grid-gap for all  */
+}
