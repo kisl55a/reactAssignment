@@ -1,16 +1,9 @@
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-// import Station from './components/'
+import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
 import Marker from './components/Marker';
 import styles from './components/Main.module.css';
-import shouldPureComponentUpdate from 'react-pure-render/function';
-
-import controllable from 'react-controllables';
-import { identifier } from '@babel/types';
-
-// @controllable(['center', 'zoom', 'hoverKey', 'clickKey'])
-// var React = require('react');
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import MainPage from './components/MainPage'
 
 export default class App extends Component {
   constructor(props) {
@@ -22,28 +15,21 @@ export default class App extends Component {
         lng: 30.33
       },
       zoom: 11,
-      Markers : [ 
+      Markers: [
         {
-          lat: 59.955413, 
-          lng:30.337844,
+          lat: 59.955413,
+          lng: 30.337844,
           text: "da"
         },
         {
-          lat: 58.955413, 
-          lng:30.337844,
+          lat: 58.955413,
+          lng: 30.337844,
           text: "da",
           available: false
         },
       ]
     }
   };
-  // TODO find out how to change the location
- 
-
-
-
-  // _onClick = ({x, y, lat, lng, event}) => console.log(x, y, lat, lng, event)
-
   _onChildClick = (key, childProps) => {
     console.log(this.state.currentMarker)
     this.setState({
@@ -57,29 +43,35 @@ export default class App extends Component {
   }
   render() {
     return (
-      <div className = { styles.grid }>
-        <div>
-          {/* <Station /> */}
-        { (this.state.currentMarker ) ? this.state.currentMarker.text : ""}
-        </div>
+
+      <div className={styles.generalGrid}>
+        <main>
+        <Router>
+        <Route path="/" exact render={
+          (routeProps) =>
+            <MainPage
+              currentMarker={ this.state.currentMarker }
+             
+              />
+        } />
+        </Router>
+        </main>
+
         <div style={{ height: '100vh', width: '100%' }}>
-        <GoogleMapReact
-          center={this.state.center}
-          bootstrapURLKeys={{ key: "AIzaSyBQc4fDzvIrxXU2Md73EjyY6oXWspFCMSY" }}
-          zoom={this.state.zoom}
-          onBoundsChange={this._onBoundsChange}
-          onChildClick={this._onChildClick}
-        >
-          {this.state.Markers.map((item, i) => (
-            <Marker key={i} lat = { item.lat } lng = { item.lng } text ={ item.text }/>
+          <GoogleMapReact
+            center={this.state.center}
+            bootstrapURLKeys={{ key: "AIzaSyBQc4fDzvIrxXU2Md73EjyY6oXWspFCMSY" }}
+            zoom={this.state.zoom}
+            onBoundsChange={this._onBoundsChange}
+            onChildClick={this._onChildClick}
+          >
+            {this.state.Markers.map((item, i) => (
+              <Marker key={i} lat={item.lat} lng={item.lng} text={item.text} />
             ))
-        }
-        {/* {console.log(this.state)} */}
-        </GoogleMapReact>
+            }
+          </GoogleMapReact>
+        </div>
       </div>
-      </div>
-
-
     );
 
   }
