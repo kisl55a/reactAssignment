@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+// import Station from './components/'
 import GoogleMapReact from 'google-map-react';
 import Marker from './components/Marker';
 import styles from './components/Main.module.css';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 
 import controllable from 'react-controllables';
+import { identifier } from '@babel/types';
 
 // @controllable(['center', 'zoom', 'hoverKey', 'clickKey'])
 // var React = require('react');
@@ -13,8 +15,8 @@ import controllable from 'react-controllables';
 export default class App extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
+      currentMarker: {},
       center: {
         lat: 59.95,
         lng: 30.33
@@ -43,19 +45,22 @@ export default class App extends Component {
   // _onClick = ({x, y, lat, lng, event}) => console.log(x, y, lat, lng, event)
 
   _onChildClick = (key, childProps) => {
+    console.log(this.state.currentMarker)
     this.setState({
       center: {
         lat: childProps.lat,
         lng: childProps.lng
       },
-      zoom: 11
+      zoom: 15,
+      currentMarker: childProps,
     })
   }
   render() {
     return (
       <div className = { styles.grid }>
         <div>
-          some shit here
+          {/* <Station /> */}
+        { (this.state.currentMarker ) ? this.state.currentMarker.text : ""}
         </div>
         <div style={{ height: '100vh', width: '100%' }}>
         <GoogleMapReact
@@ -69,7 +74,7 @@ export default class App extends Component {
             <Marker key={i} lat = { item.lat } lng = { item.lng } text ={ item.text }/>
             ))
         }
-        {console.log(this.state)}
+        {/* {console.log(this.state)} */}
         </GoogleMapReact>
       </div>
       </div>
