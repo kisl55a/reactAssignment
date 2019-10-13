@@ -4,21 +4,24 @@ import Marker from './components/Marker';
 import axios from 'axios';
 import styles from './components/Main.module.css';
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
-import MainPage from './components/MainPage'
+import MainPage from './components/MainPage';
+import Login from './components/Login';
+import Registration from './components/Registration';
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      message: '',
+      isLoggedIn: false,
       data: [],
       currentMarker: {},
       center: {
         lat: 65.01,
         lng: 25.49
       },
-      zoom: 15,
-      Markers: [
-      ]
+      zoom: 10,
+      Markers: []
     }
   };
 
@@ -32,6 +35,19 @@ export default class App extends Component {
       console.error(error);
     })
   }
+  register = (username, email, password) => {
+    axios.post('http://localhost:4000/signUp', {
+      username: username,
+      email: email,
+      password: password,
+    })
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
   onDrag = ((map) => {
     console.log('dsadasd')
   })
@@ -42,7 +58,7 @@ export default class App extends Component {
         lat: childProps.lat,
         lng: childProps.lng
       },
-      zoom: 14,
+      zoom: 15,
       currentMarker: childProps,
     })
   }
@@ -52,10 +68,13 @@ export default class App extends Component {
       <div className={styles.generalGrid}>
         <main>
         <Router>
+        <Route path="/login" exact render={ routeProps => <Login  {...routeProps} /> }/>
+        <Route path="/registration" exact render={ routeProps => <Registration  {...routeProps} register = { this.register } message = '' /> }/>
         <Route path="/" exact render={
           (routeProps) =>
             <MainPage
               currentMarker={ this.state.currentMarker }
+              isLoggedIn = { this.state.isLoggedIn }
               />
         } />
         </Router>
@@ -63,10 +82,9 @@ export default class App extends Component {
 
         <div style={{ height: '100vh', width: '100%' }}>
           <GoogleMapReact
-            center={this.state.center}
+            center={ this.state.center }
             bootstrapURLKeys={{ key: "AIzaSyBQc4fDzvIrxXU2Md73EjyY6oXWspFCMSY" }}
-            zoom={this.state.zoom}
-            onBoundsChange={this._onBoundsChange}
+            zoom={ this.state.zoom }
             onChildClick={this._onChildClick}
           >
             { console.log(this.state.zoom)}

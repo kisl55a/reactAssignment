@@ -3,7 +3,6 @@ const app = express();
 
 const port = 4000;
 const bodyParser = require('body-parser');
-const miceData = require('./data/mice.json');
 var cors = require('cors');
 const db = require('./db');
 
@@ -22,20 +21,21 @@ app.get('/getData', (req, res) =>{
         res.sendStatus(500);
     })  
 });
-app.post('/addData', (req, res) =>{
-//  отправлять промисы после выполнения лупы
+app.post('/signUp', (req, res) =>{
+
     let data = req.body;
-    Promise.all( [
-    data.forEach(element => {
-         db.query('INSERT INTO data (name, description, company, price, currency, ship, image) VALUES (?,?,?,?,?,?,?)', [element.name, element.description, element.company, element.price, element.currency, element.ship, element.image])
-    })]
-    ).then((response) => {
-        res.send('succesfull');
-    })
-    .catch((err) => {
-        console.log(err);
-        // res.send(err);
-    })          
+    console.log(data);
+    // Promise.all( [
+    // data.forEach(element => {
+    //      db.query('INSERT INTO data (name, description, company, price, currency, ship, image) VALUES (?,?,?,?,?,?,?)', [element.name, element.description, element.company, element.price, element.currency, element.ship, element.image])
+    // })]
+    // ).then((response) => {
+    //     res.send('succesfull');
+    // })
+    // .catch((err) => {
+    //     console.log(err);
+    //     // res.send(err);
+    // })          
 });
 app.patch('/changeData', (req, res) =>{
     //  отправлять промисы после выполнения лупы
@@ -72,7 +72,8 @@ app.patch('/deleteData', (req, res) =>{
 // DB init 
 Promise.all(    
     [
-        db.query("CREATE TABLE IF NOT EXISTS stations(`stationId` INT NOT NULL AUTO_INCREMENT , `stationName` TEXT NOT NULL , `address` TEXT NOT NULL ,`lat` INT NOT NULL , `lng` INT NOT NULL, `type` TEXT NOT NULL , `price` INT NOT NULL , `measure` TEXT NOT NULL , PRIMARY KEY (`stationId`))")
+        db.query("CREATE TABLE IF NOT EXISTS stations(`stationId` INT NOT NULL AUTO_INCREMENT , `stationName` TEXT NOT NULL , `address` TEXT NOT NULL ,`lat` INT NOT NULL , `lng` INT NOT NULL, `type` TEXT NOT NULL , `price` INT NOT NULL , `measure` TEXT NOT NULL , PRIMARY KEY (`stationId`))"),
+        db.query("CREATE TABLE IF NOT EXISTS users ( `idUser` INT NOT NULL AUTO_INCREMENT , `nickname` varchar(50) NOT NULL , `email` varchar(50) NOT NULL , `password` varchar(512) NOT NULL , PRIMARY KEY (`idUser`))")
         // Add more table create statements if you need more tables
     ]
 ).then(() => {

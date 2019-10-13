@@ -28,3 +28,10 @@
   .post-3 {
     grid-area: post-3;
   }
+
+  .hidden{
+    display: none;
+  }
+  .show {
+    display: inherit;
+  }
