@@ -1,12 +1,24 @@
 import React from 'react';
 import Icon from 'react-icons-kit';
-import {batteryCharging} from 'react-icons-kit/ionicons/batteryCharging'
-// import {batteryFull} from 'react-icons-kit/ionicons/batteryFull'
-import {batteryCharge} from 'react-icons-kit/typicons/batteryCharge'
+import styles from './Main.module.css';
 
+import { batteryCharging } from 'react-icons-kit/ionicons/batteryCharging'
+// import {batteryFull} from 'react-icons-kit/ionicons/batteryFull'
+import { batteryCharge } from 'react-icons-kit/typicons/batteryCharge'
+import { BrowserRouter as Link } from "react-router-dom";
 export default function Marker(props) {
-    return(         
-    <Icon icon={batteryCharge}/>         
+
+
+    return (
+        <div>
+        
+                <div className = { styles.da }>
+                    <Icon icon={batteryCharge} />
+                </div>
+            
+
+        </div>
+
     )
 }
 

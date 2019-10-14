@@ -28,7 +28,7 @@ export default function Login(props) {
     <div>
       <form  onSubmit={ register }>
         <div>
-          username
+          Username
         </div>
         <input type="text" name="username" />
         <div>

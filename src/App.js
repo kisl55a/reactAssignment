@@ -3,10 +3,11 @@ import GoogleMapReact from 'google-map-react';
 import Marker from './components/Marker';
 import axios from 'axios';
 import styles from './components/Main.module.css';
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import MainPage from './components/MainPage';
 import Login from './components/Login';
 import Registration from './components/Registration';
+import StationInfo from './components/StationInfo';
 
 export default class App extends Component {
   constructor(props) {
@@ -20,16 +21,19 @@ export default class App extends Component {
         lat: 65.01,
         lng: 25.49
       },
-      zoom: 10,
-      Markers: []
+      zoom: 13,
+      Markers: [],
+      arr: [].slice(0,4),
+      showSearchResults: false
     }
   };
-
+  
   componentDidMount = () =>
   {    
     axios.get('http://localhost:4000/getData').then(result => {
       this.setState({Markers: result.data})
-      console.log(this.state.Markers);
+      this.setState({ arr: result.data})
+      
     })
     .catch(error => {
       console.error(error);
@@ -48,33 +52,58 @@ export default class App extends Component {
       console.log(error);
     });
   }
-  onDrag = ((map) => {
-    console.log('dsadasd')
-  })
+  textInputChange = (value) => {
+    this.setState({ arr: this.state.Markers.filter(({ stationName }) => stationName.toLowerCase().indexOf(value.toLowerCase()) >= 0) });   
+    console.log(this.state.arr);
+    this.setState({currentMarker: {}})
+    // ( this.state.arr.length != 0) ? this.setState( {showSearchResults: true}) : this.setState( {showSearchResults: false})
+
+  }
+  setCurrentStation = (currentStation) => {
+    this.setState ({
+      currentMarker: currentStation,
+      center: {
+        lat: currentStation.lat,
+        lng: currentStation.lng
+      },
+      zoom: 14  
+    })
+
+  }
   _onChildClick = (key, childProps) => {
-    console.log(this.state.currentMarker)
+    let marker
+    console.log(this.props)
+    this.state.Markers.forEach(e => {
+      if(e.stationName == childProps.text) {
+        marker = e
+      }
+    });
     this.setState({
       center: {
         lat: childProps.lat,
         lng: childProps.lng
       },
-      zoom: 15,
-      currentMarker: childProps,
+      zoom: 14,
+      currentMarker: marker,
     })
   }
   render() {
     return (
-
       <div className={styles.generalGrid}>
         <main>
         <Router>
+        <Route path="/station/:id" exact  render={ routeProps => <StationInfo {...routeProps} getInfoAboutStation={ this.getInfoAboutStation } /> } />
         <Route path="/login" exact render={ routeProps => <Login  {...routeProps} /> }/>
         <Route path="/registration" exact render={ routeProps => <Registration  {...routeProps} register = { this.register } message = '' /> }/>
         <Route path="/" exact render={
           (routeProps) =>
             <MainPage
-              currentMarker={ this.state.currentMarker }
+              currentMarker = { this.state.currentMarker }
               isLoggedIn = { this.state.isLoggedIn }
+              onSearchFilterUpdate={ this.textInputChange }
+              showSearchResults = {this.state.showSearchResults}
+              resultArray = { this.state.arr }
+              setStation = { this.setCurrentStation }
               />
         } />
         </Router>
@@ -87,7 +116,6 @@ export default class App extends Component {
             zoom={ this.state.zoom }
             onChildClick={this._onChildClick}
           >
-            { console.log(this.state.zoom)}
             {this.state.Markers.map((item, i) => (
               <Marker key={i} lat={item.lat} lng={item.lng} text={item.stationName} />
             ))
