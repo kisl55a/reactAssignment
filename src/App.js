@@ -32,14 +32,14 @@ export default class App extends Component {
   {    
     axios.get('http://localhost:4000/getData').then(result => {
       this.setState({Markers: result.data})
-      this.setState({ arr: result.data})
-      
+      this.setState({ arr: result.data })
     })
     .catch(error => {
       console.error(error);
     })
   }
   register = (username, email, password) => {
+    console.log(email, password, username)
     axios.post('http://localhost:4000/signUp', {
       username: username,
       email: email,
@@ -54,7 +54,6 @@ export default class App extends Component {
   }
   textInputChange = (value) => {
     this.setState({ arr: this.state.Markers.filter(({ stationName }) => stationName.toLowerCase().indexOf(value.toLowerCase()) >= 0) });   
-    console.log(this.state.arr);
     this.setState({currentMarker: {}})
     // ( this.state.arr.length != 0) ? this.setState( {showSearchResults: true}) : this.setState( {showSearchResults: false})
 
@@ -68,12 +67,9 @@ export default class App extends Component {
       },
       zoom: 14  
     })
-    console.log(currentStation)
-
   }
   _onChildClick = (key, childProps) => {
     let marker
-    console.log(this.props)
     this.state.Markers.forEach(e => {
       if(e.stationName == childProps.text) {
         marker = e

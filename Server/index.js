@@ -1,12 +1,38 @@
 const express = require('express');
 const app = express();
-
 const port = 4000;
 const bodyParser = require('body-parser');
 var cors = require('cors');
 const db = require('./db');
+const bcrypt = require('bcryptjs');
+const passport = require('passport');
+var Strategy = require('passport-http').BasicStrategy;
 
+const saltRounds = 4;
 app.use(bodyParser.json());
+app.use(cors())
+
+passport.use(new Strategy((username, password, cb) => {
+    db.query('SELECT id, username, password FROM users WHERE username = ?', [username]).then(dbResults => {
+  
+      if(dbResults.length == 0)
+      {
+        return cb(null, false);
+      }
+  
+      bcrypt.compare(password, dbResults[0].password).then(bcryptResult => {
+        if(bcryptResult == true)
+        {
+          cb(null, dbResults[0]);
+        }
+        else
+        {
+          return cb(null, false);
+        }
+      })
+  
+    }).catch(dbError => cb(err))
+  }));
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, PUT, PATCH, POST, DELETE");
@@ -22,20 +48,30 @@ app.get('/getData', (req, res) =>{
     })  
 });
 app.post('/signUp', (req, res) =>{
-    let data = req.body;
-    console.log(data);
-    // Promise.all( [
-    // data.forEach(element => {
-    //      db.query('INSERT INTO data (name, description, company, price, currency, ship, image) VALUES (?,?,?,?,?,?,?)', [element.name, element.description, element.company, element.price, element.currency, element.ship, element.image])
-    // })]
-    // ).then((response) => {
-    //     res.send('succesfull');
-    // })
-    // .catch((err) => {
-    //     console.log(err);
-    //     // res.send(err);
-    // })          
+    
+    let username = req.body.username.trim();
+    let password = req.body.password.trim();
+    let email = req.body.email.trim();
+    if((typeof username === "string") &&
+    (username.length > 3) &&
+    (typeof password === "string") &&
+    (password.length > 3))
+ {
+   bcrypt.hash(password, saltRounds).then(hash =>
+     db.query('INSERT INTO users (username, password, email) VALUES (?,?,?)', [username, hash, email])
+   )
+   .then(dbResults => {
+       console.log(dbResults);
+       res.sendStatus(201);
+   })
+   .catch(error => res.sendStatus(500));
+ }
+ else {
+   console.log("incorrect username or password, both must be strings and username more than 4 long and password more than 6 characters long");
+   res.sendStatus(400);
+ }   
 });
+
 app.patch('/changeData', (req, res) =>{
     //  отправлять промисы после выполнения лупы
         let data = req.body;
@@ -52,27 +88,11 @@ app.patch('/changeData', (req, res) =>{
         })          
     });
 // Do not accept "delete" request
-app.patch('/deleteData', (req, res) =>{
-        //  отправлять промисы после выполнения лупы
-            let data = req.body;
-            // console.log(data);
-            Promise.all( [
-            data.forEach(element => {
-                 db.query('DELETE FROM `data` WHERE `data`.`id` = (?)', [element.id])
-            })]
-            ).then((response) => {
-                res.send('succesfull');
-            })
-            .catch((err) => {
-                console.log(err);
-                // res.send(err);
-            })          
-        });
-// DB init 
+
 Promise.all(    
     [
         db.query("CREATE TABLE IF NOT EXISTS stations(`stationId` INT NOT NULL AUTO_INCREMENT , `stationName` TEXT NOT NULL , `address` TEXT NOT NULL ,`lat` float(50) NOT NULL , `lng` float(50) NOT NULL, `type` varchar(50) NOT NULL , `price` varchar(50) NOT NULL , `measure` TEXT NOT NULL , PRIMARY KEY (`stationId`))"),
-        db.query("CREATE TABLE IF NOT EXISTS users ( `idUser` INT NOT NULL AUTO_INCREMENT , `nickname` varchar(50) NOT NULL , `email` varchar(50) NOT NULL , `password` varchar(512) NOT NULL , PRIMARY KEY (`idUser`))")
+        db.query("CREATE TABLE IF NOT EXISTS users ( `idUser` INT NOT NULL AUTO_INCREMENT , `username` varchar(50) NOT NULL , `email` varchar(50) NOT NULL , `password` varchar(512) NOT NULL , PRIMARY KEY (`idUser`))")
         // Add more table create statements if you need more tables
     ]
 ).then(() => {
