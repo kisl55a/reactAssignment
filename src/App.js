@@ -68,6 +68,7 @@ export default class App extends Component {
       },
       zoom: 14  
     })
+    console.log(currentStation)
 
   }
   _onChildClick = (key, childProps) => {

@@ -6,7 +6,7 @@
         "lat": 65.01062,
         "lng": 25.490793,
         "type": "Fast",
-        "price": "0",
+        "price": 0.2,
         "measure": "e"
     },
     {
@@ -16,7 +16,7 @@
         "lat": 65.012615,
         "lng": 25.51618,
         "type": "Slow",
-        "price": "0",
+        "price": 0.05,
         "measure": "c/kWh"
     }
 ]

@@ -22,7 +22,6 @@ app.get('/getData', (req, res) =>{
     })  
 });
 app.post('/signUp', (req, res) =>{
-
     let data = req.body;
     console.log(data);
     // Promise.all( [
@@ -72,7 +71,7 @@ app.patch('/deleteData', (req, res) =>{
 // DB init 
 Promise.all(    
     [
-        db.query("CREATE TABLE IF NOT EXISTS stations(`stationId` INT NOT NULL AUTO_INCREMENT , `stationName` TEXT NOT NULL , `address` TEXT NOT NULL ,`lat` INT NOT NULL , `lng` INT NOT NULL, `type` TEXT NOT NULL , `price` INT NOT NULL , `measure` TEXT NOT NULL , PRIMARY KEY (`stationId`))"),
+        db.query("CREATE TABLE IF NOT EXISTS stations(`stationId` INT NOT NULL AUTO_INCREMENT , `stationName` TEXT NOT NULL , `address` TEXT NOT NULL ,`lat` float(50) NOT NULL , `lng` float(50) NOT NULL, `type` varchar(50) NOT NULL , `price` varchar(50) NOT NULL , `measure` TEXT NOT NULL , PRIMARY KEY (`stationId`))"),
         db.query("CREATE TABLE IF NOT EXISTS users ( `idUser` INT NOT NULL AUTO_INCREMENT , `nickname` varchar(50) NOT NULL , `email` varchar(50) NOT NULL , `password` varchar(512) NOT NULL , PRIMARY KEY (`idUser`))")
         // Add more table create statements if you need more tables
     ]
@@ -82,4 +81,20 @@ Promise.all(
            console.log('Listening to port ', port)
 
     });
+});
+
+app.post('/addData', (req, res) =>{
+//  отправлять промисы после выполнения лупы
+    let data = req.body;
+    Promise.all( [
+    data.forEach(element => {
+         db.query('INSERT INTO stations (stationName, address, lat, lng, type, price, measure) VALUES (?,?,?,?,?,?,?)', [element.stationName, element.address, element.lat, element.lng, element.type, element.price, element.measure])
+    })]
+    ).then((response) => {
+        res.send('succesfull');
+    })
+    .catch((err) => {
+        console.log(err);
+        // res.send(err);
+    })          
 });
