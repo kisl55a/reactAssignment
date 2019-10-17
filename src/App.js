@@ -26,7 +26,8 @@ export default class App extends Component {
       zoom: 13,
       Markers: [],
       arr: [].slice(0,4),
-      showSearchResults: false
+      showSearchResults: false,
+      isCharging : false
     }
   };
   componentDidMount = () =>
@@ -39,6 +40,7 @@ export default class App extends Component {
       console.error(error);
     })
   }
+
   login = (username, password) => {
     axios.get('http://localhost:4000/signIn', {
       auth: {
@@ -90,10 +92,13 @@ export default class App extends Component {
       zoom: 14  
     })
   }
+  setCurrentStationToNull = () => {
+      this.setState({ currentMarker: {}})
+  }
   _onChildClick = (key, childProps) => {
     let marker
     this.state.Markers.forEach(e => {
-      if(e.stationName == childProps.text) {
+      if(e.stationName === childProps.text) {
         marker = e
       }
     });
@@ -112,7 +117,7 @@ export default class App extends Component {
         <main>
         <Router>
         <Route path="/station/:id" exact  render={ routeProps => <StationInfo {...routeProps} getInfoAboutStation={ this.getInfoAboutStation } /> } />
-        <Route path="/login" exact render={ routeProps => <Login  login={ this.login } {...routeProps} /> }/>
+        <Route path="/login" exact render={ routeProps => <Login login={ this.login } {...routeProps} /> }/>
         <Route path="/registration" exact render={ routeProps => <Registration  {...routeProps} register = { this.register } message = '' /> }/>
         <Route path="/" exact render={
           (routeProps) =>
@@ -123,6 +128,7 @@ export default class App extends Component {
               showSearchResults = {this.state.showSearchResults}
               resultArray = { this.state.arr }
               setStation = { this.setCurrentStation }
+              setCurrentStationToNull = { this.setCurrentStationToNull }
               />
         } />
         </Router>
@@ -136,7 +142,7 @@ export default class App extends Component {
             onChildClick={this._onChildClick}
           >
             {this.state.Markers.map((item, i) => (
-              <Marker key={i} lat={item.lat} lng={item.lng} text={item.stationName} />
+              <Marker key={i} lat={item.lat} lng={item.lng} isTaken={item.isTaken} type={item.type} text={item.stationName} />
             ))
             }
           </GoogleMapReact>
@@ -146,4 +152,4 @@ export default class App extends Component {
 
   }
 }
-
+//CREATE TABLE `map`.`Charging` ( `chargeId` INT NOT NULL AUTO_INCREMENT , `idUser` INT NOT NULL , `stationId` INT NOT NULL , `startTime` DATE NOT NULL DEFAULT CURRENT_TIMESTAMP , `timeOfUsage` INT NOT NULL , PRIMARY KEY (`chargeId`)) ENGINE = InnoDB;
