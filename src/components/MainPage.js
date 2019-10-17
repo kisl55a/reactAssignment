@@ -33,7 +33,7 @@ export default function MainPage(props) {
       </div>
       <div id="mainInfo" className={ styles.post2 }>
         <div id="infoAboutStation">
-          { console.log( props.currentMarker)}
+          {/* { console.log( props.currentMarker)} */}
         <h3> Choose station on the map or in the list</h3>
       {(props.currentMarker.stationName) ? <StationInfo { ...props.currentMarker }/> : props.resultArray.map((item, i) => (
               <BriefStationInfo key={i} setStation = { props.setStation }  info = {item} />

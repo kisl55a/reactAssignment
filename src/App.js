@@ -15,6 +15,8 @@ export default class App extends Component {
     this.state = {
       message: '',
       isLoggedIn: false,
+      username: '',
+      password: '', 
       data: [],
       currentMarker: {},
       center: {
@@ -27,16 +29,35 @@ export default class App extends Component {
       showSearchResults: false
     }
   };
-  
   componentDidMount = () =>
   {    
     axios.get('http://localhost:4000/getData').then(result => {
-      this.setState({Markers: result.data})
+      this.setState({ Markers: result.data })
       this.setState({ arr: result.data })
     })
     .catch(error => {
       console.error(error);
     })
+  }
+  login = (username, password) => {
+    axios.get('http://localhost:4000/signIn', {
+      auth: {
+        username: username,
+        password: password
+      },
+    })
+    .then(
+    response => {
+      this.setState({ 
+        isLoggedIn: response.data,
+        username: username,
+        password: password
+       })
+    })
+    .catch(error => {
+      console.error(error);
+    });
+
   }
   register = (username, email, password) => {
     console.log(email, password, username)
@@ -56,6 +77,7 @@ export default class App extends Component {
     this.setState({ arr: this.state.Markers.filter(({ stationName }) => stationName.toLowerCase().indexOf(value.toLowerCase()) >= 0) });   
     this.setState({currentMarker: {}})
     // ( this.state.arr.length != 0) ? this.setState( {showSearchResults: true}) : this.setState( {showSearchResults: false})
+    console.log( this.state.isLoggedIn )
 
   }
   setCurrentStation = (currentStation) => {
@@ -90,7 +112,7 @@ export default class App extends Component {
         <main>
         <Router>
         <Route path="/station/:id" exact  render={ routeProps => <StationInfo {...routeProps} getInfoAboutStation={ this.getInfoAboutStation } /> } />
-        <Route path="/login" exact render={ routeProps => <Login  {...routeProps} /> }/>
+        <Route path="/login" exact render={ routeProps => <Login  login={ this.login } {...routeProps} /> }/>
         <Route path="/registration" exact render={ routeProps => <Registration  {...routeProps} register = { this.register } message = '' /> }/>
         <Route path="/" exact render={
           (routeProps) =>

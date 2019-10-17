@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(cors())
 
 passport.use(new Strategy((username, password, cb) => {
-    db.query('SELECT id, username, password FROM users WHERE username = ?', [username]).then(dbResults => {
+    db.query('SELECT idUser, username, password FROM users WHERE username = ?', [username]).then(dbResults => {
   
       if(dbResults.length == 0)
       {
@@ -31,7 +31,7 @@ passport.use(new Strategy((username, password, cb) => {
         }
       })
   
-    }).catch(dbError => cb(err))
+    }).catch(dbError => cb(dbError))
   }));
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -47,6 +47,13 @@ app.get('/getData', (req, res) =>{
         res.sendStatus(500);
     })  
 });
+    
+  app.get('/signIn',
+  passport.authenticate('basic', { session: false }),
+   (req, res) => res.send(true));
+
+  
+
 app.post('/signUp', (req, res) =>{
     
     let username = req.body.username.trim();
@@ -91,7 +98,7 @@ app.patch('/changeData', (req, res) =>{
 
 Promise.all(    
     [
-        db.query("CREATE TABLE IF NOT EXISTS stations(`stationId` INT NOT NULL AUTO_INCREMENT , `stationName` TEXT NOT NULL , `address` TEXT NOT NULL ,`lat` float(50) NOT NULL , `lng` float(50) NOT NULL, `type` varchar(50) NOT NULL , `price` varchar(50) NOT NULL , `measure` TEXT NOT NULL , PRIMARY KEY (`stationId`))"),
+        db.query("CREATE TABLE IF NOT EXISTS stations(`stationId` INT NOT NULL AUTO_INCREMENT , `stationName` TEXT NOT NULL , `address` TEXT NOT NULL ,`lat` float(50) NOT NULL , `lng` float(50) NOT NULL, `type` varchar(50) NOT NULL , `price` varchar(50) NOT NULL , `measure` TEXT NOT NULL , `isTaken` BOOLEAN NOT NULL DEFAULT FALSE, `UUID` VARCHAR(4) NOT NULL, PRIMARY KEY (`stationId`))"),
         db.query("CREATE TABLE IF NOT EXISTS users ( `idUser` INT NOT NULL AUTO_INCREMENT , `username` varchar(50) NOT NULL , `email` varchar(50) NOT NULL , `password` varchar(512) NOT NULL , PRIMARY KEY (`idUser`))")
         // Add more table create statements if you need more tables
     ]
@@ -108,7 +115,7 @@ app.post('/addData', (req, res) =>{
     let data = req.body;
     Promise.all( [
     data.forEach(element => {
-         db.query('INSERT INTO stations (stationName, address, lat, lng, type, price, measure) VALUES (?,?,?,?,?,?,?)', [element.stationName, element.address, element.lat, element.lng, element.type, element.price, element.measure])
+         db.query('INSERT INTO stations (stationName, address, lat, lng, type, price, measure, UUID) VALUES (?,?,?,?,?,?,?,?)', [element.stationName, element.address, element.lat, element.lng, element.type, element.price, element.measure, element.UUID])
     })]
     ).then((response) => {
         res.send('succesfull');

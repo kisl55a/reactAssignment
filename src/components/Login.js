@@ -2,15 +2,13 @@ import React from 'react'
 
 export default function Login(props) {
 
-  function register(event)
+  function login(event)
   {
     event.preventDefault();
-    // props.storeInfo(
-    // //   event.target['name'].value,
-    // //   event.target['streetAddress'].value,
-    // //   event.target['city'].value,
-    // //   event.target['email'].value,
-    // );
+    props.login(
+      event.target['name'].value,
+      event.target['password'].value,
+    );
     props.history.goBack();
   }
 
@@ -22,7 +20,7 @@ export default function Login(props) {
 
   return (
     <div>
-      <form onSubmit={ register }>
+      <form onSubmit={ login }>
         <div>
           Nickname
         </div>
@@ -31,7 +29,7 @@ export default function Login(props) {
         <div>
           Password
         </div>
-        <input type="password" name="email" />
+        <input type="password" name="password" />
 
         <button onClick={ cancel }>Cancel</button>
         <button type="submit">Login</button>
