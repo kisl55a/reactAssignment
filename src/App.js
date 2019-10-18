@@ -95,6 +95,25 @@ export default class App extends Component {
   setCurrentStationToNull = () => {
       this.setState({ currentMarker: {}})
   }
+  startCharging = (UUID) => {
+    axios.get(`http://localhost:4000/startCharging/${UUID}`, {
+      auth: {
+        username: this.state.username,
+        password: this.state.password,
+        UUID: UUID
+      },
+      
+    })
+    .then(
+    response => {
+      
+      console.log(response)
+    })
+    .catch(error => {
+      console.error(error);
+    });
+    // console.log( this.state.username, this.state.password )
+  }
   _onChildClick = (key, childProps) => {
     let marker
     this.state.Markers.forEach(e => {
@@ -129,6 +148,7 @@ export default class App extends Component {
               resultArray = { this.state.arr }
               setStation = { this.setCurrentStation }
               setCurrentStationToNull = { this.setCurrentStationToNull }
+              startCharging = { this.startCharging }
               />
         } />
         </Router>

@@ -52,10 +52,15 @@ app.get('/getData', (req, res) =>{
   passport.authenticate('basic', { session: false }),
    (req, res) => res.send(true));
 
+   app.get('/startCharging/:UUID',
+   passport.authenticate('basic', { session: false }),
+   (req, res) => { console.log(req.params.UUID);
+    res.send( "started ");
+     })
+   
   
 
 app.post('/signUp', (req, res) =>{
-    
     let username = req.body.username.trim();
     let password = req.body.password.trim();
     let email = req.body.email.trim();
@@ -98,8 +103,10 @@ app.patch('/changeData', (req, res) =>{
 
 Promise.all(    
     [
-        db.query("CREATE TABLE IF NOT EXISTS stations(`stationId` INT NOT NULL AUTO_INCREMENT , `stationName` TEXT NOT NULL , `address` TEXT NOT NULL ,`lat` float(50) NOT NULL , `lng` float(50) NOT NULL, `type` varchar(50) NOT NULL , `price` varchar(50) NOT NULL , `measure` TEXT NOT NULL , `isTaken` BOOLEAN NOT NULL DEFAULT FALSE, `UUID` VARCHAR(4) NOT NULL, PRIMARY KEY (`stationId`))"),
-        db.query("CREATE TABLE IF NOT EXISTS users ( `idUser` INT NOT NULL AUTO_INCREMENT , `username` varchar(50) NOT NULL , `email` varchar(50) NOT NULL , `password` varchar(512) NOT NULL , PRIMARY KEY (`idUser`))")
+        db.query("CREATE TABLE IF NOT EXISTS charging ( `idCharging` INT NOT NULL AUTO_INCREMENT , `idUser` INT NOT NULL , `stationId` INT NOT NULL , `timeOfStart` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `timeOfUsage` INT NOT NULL , INDEX (`idUser`), INDEX (`stationId`), PRIMARY KEY (`idCharging`)) ENGINE = InnoDB "),        db.query("CREATE TABLE IF NOT EXISTS stations(`stationId` INT NOT NULL AUTO_INCREMENT , `stationName` TEXT NOT NULL , `address` TEXT NOT NULL ,`lat` float(50) NOT NULL , `lng` float(50) NOT NULL, `type` varchar(50) NOT NULL , `price` varchar(50) NOT NULL , `measure` TEXT NOT NULL , `isTaken` BOOLEAN NOT NULL DEFAULT FALSE, `UUID` VARCHAR(4) NOT NULL, PRIMARY KEY (`stationId`))"),
+        db.query("CREATE TABLE IF NOT EXISTS users ( `idUser` INT NOT NULL AUTO_INCREMENT , `username` varchar(50) NOT NULL , `email` varchar(50) NOT NULL , `password` varchar(512) NOT NULL , PRIMARY KEY (`idUser`))"),
+        db.query("ALTER TABLE `charging` ADD FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`) ON DELETE CASCADE ON UPDATE CASCADE;"),
+        db.query("ALTER TABLE `charging` ADD FOREIGN KEY (`stationId`) REFERENCES `stations`(`stationId`) ON DELETE CASCADE ON UPDATE CASCADE;")
         // Add more table create statements if you need more tables
     ]
 ).then(() => {
@@ -125,3 +132,6 @@ app.post('/addData', (req, res) =>{
         // res.send(err);
     })          
 });
+// CREATE TABLE `map`.`charging` ( `idCharging` INT NOT NULL AUTO_INCREMENT , `idUser` INT NOT NULL , `stationId` INT NOT NULL , `timeOfStart` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `timeOfUsage` INT NOT NULL , INDEX (`idUser`), INDEX (`stationId`), PRIMARY KEY (`idCharging`)) ENGINE = InnoDB;
+// ALTER TABLE `charging` ADD FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`) ON DELETE CASCADE ON UPDATE CASCADE;
+// ALTER TABLE `charging` ADD FOREIGN KEY (`stationId`) REFERENCES `stations`(`stationId`) ON DELETE CASCADE ON UPDATE CASCADE;

@@ -46,7 +46,7 @@ export default function MainPage(props) {
         </div>
        
       <div className={styles.post3}> 
-      {(props.isLoggedIn) ?  <Charging />: "You can start charging when you are logged in"}
+      {(props.isLoggedIn) ?  <Charging startCharging = { props.startCharging } />: "You can start charging when you are logged in"}
      
       </div>
     </div>

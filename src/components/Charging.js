@@ -1,14 +1,14 @@
 import React from 'react'
 
-export default function Login(props) {
+export default function Charging(props) {
 
   function startCharging(event)
   {
     event.preventDefault();
-    props.login(
-      event.target['name'].value,
+    props.startCharging(
+      event.target['identifier'].value,
     );
-    props.history.goBack();
+    
   }
 
 //   function cancel(event)
