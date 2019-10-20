@@ -9,6 +9,7 @@ import Login from './components/Login';
 import Registration from './components/Registration';
 import StationInfo from './components/StationInfo';
 
+
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -27,7 +28,8 @@ export default class App extends Component {
       Markers: [],
       arr: [].slice(0,4),
       showSearchResults: false,
-      isCharging : false
+      isCharging : false,
+      startTime: ""
     }
   };
   componentDidMount = () =>
@@ -95,7 +97,10 @@ export default class App extends Component {
   setCurrentStationToNull = () => {
       this.setState({ currentMarker: {}})
   }
+
   startCharging = (UUID) => {
+    var moment = require('moment');
+    moment().format();
     axios.get(`http://localhost:4000/startCharging/${UUID}`, {
       auth: {
         username: this.state.username,
@@ -107,11 +112,12 @@ export default class App extends Component {
     .then(
     response => {
         console.log(response.data)
+        this.setState()
+
     })
     .catch(error => {
       console.error(error);
     });
-    // console.log( this.state.username, this.state.password )
   }
   _onChildClick = (key, childProps) => {
     let marker

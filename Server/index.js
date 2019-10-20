@@ -48,24 +48,29 @@ app.get('/getData', (req, res) => {
 app.get('/signIn',
   passport.authenticate('basic', { session: false }),
   (req, res) => res.send(true));
-  let answer = false;
 app.get('/startCharging/:UUID',
   passport.authenticate('basic', { session: false }),
   (req, res) => {
     // console.log(req.params.UUID);
     db.query('SELECT stationId FROM stations WHERE UUID = ?', [req.params.UUID.toUpperCase()]).then(dbResults => {
       if (dbResults.length == 0) {
-         res.send(false)
+        res.send(false)
       } else {
-        console.log(req.user.idUser, dbResults[0].stationId)
-        db.query('INSERT INTO `charging` ( `idUser`, `stationId`, `startTime`, `timeOfUsage`) VALUES ( ?, ?, CURRENT_TIMESTAMP, ?)',[ req.user.idUser, dbResults[0].stationId, 1])
-        .then( res.send(true)) 
-        .catch(dbEr => console.log(dbEr))
+        // console.log(req.user.idUser, dbResults[0].stationId)
+        db.query('INSERT INTO `charging` ( `idUser`, `stationId`, `startTime`, `timeOfUsage`) VALUES (  ?, ?, CURRENT_TIMESTAMP, ?)', [req.user.idUser, dbResults[0].stationId, 1])
+          .then(
+            db.query('UPDATE `stations` SET `isTaken` = 1 WHERE `stationId` = ?', [dbResults[0].stationId])
+              .then(db.query('SELECT MAX(`chargeId`) AS `id` FROM `charging`')
+                .then(results => res.send(results[0]))
+                .catch())
+              .catch(dbEr => console.log(dbEr))
+          )
+          .catch(dbEr => console.log(dbEr))
       }
     }).catch(dbError => console.log(dbError))
-    
   })
-
+// TODO сделать функцию по изменению времени
+// и цены
 
 
 app.post('/signUp', (req, res) => {
@@ -143,3 +148,6 @@ app.post('/addData', (req, res) => {
 // ALTER TABLE `charging` ADD FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`) ON DELETE CASCADE ON UPDATE CASCADE;
 // ALTER TABLE `charging` ADD FOREIGN KEY (`stationId`) REFERENCES `stations`(`stationId`) ON DELETE CASCADE ON UPDATE CASCADE;
 //db.query('INSERT INTO `charging` (`chargeId`, `idUser`, `stationId`, `startTime`, `timeOfUsage`) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?))'.then(results => {
+  // db.query('SELECT TIMESTAMPDIFF(MINUTE, startTime, CURRENT_TIMESTAMP()) from charging where chargeId = 101', [])
+  //       .then(results => { res.send(results)})
+  //       .catch()
