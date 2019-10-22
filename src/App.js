@@ -28,7 +28,7 @@ export default class App extends Component {
       },
       zoom: 13,
       Markers: [],
-      arr: [].slice(0, 4),
+      arr: [],
       showSearchResults: false,
       isCharging: false,
       UUID: "",
@@ -96,6 +96,7 @@ export default class App extends Component {
 
   textInputChange = (value) => {
     this.setState({ arr: this.state.Markers.filter(({ stationName }) => stationName.toLowerCase().indexOf(value.toLowerCase()) >= 0) });
+    // this.setState({ arr : this.state.arr.length = 5})
     this.setState({ currentMarker: {} })
     // ( this.state.arr.length != 0) ? this.setState( {showSearchResults: true}) : this.setState( {showSearchResults: false})
     console.log(this.state.isLoggedIn)
@@ -223,7 +224,7 @@ stopCharging = () => {
                   isLoggedIn={this.state.isLoggedIn}
                   onSearchFilterUpdate={this.textInputChange}
                   showSearchResults={this.state.showSearchResults}
-                  resultArray={this.state.arr}
+                  resultArray = { this.state.arr.slice(0,8) }
                   setStation={this.setCurrentStation}
                   setCurrentStationToNull={this.setCurrentStationToNull}
                   startCharging={this.startCharging}

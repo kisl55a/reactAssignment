@@ -18,6 +18,7 @@ export default function Login(props) {
          <tr>
      <th>Station Number</th>
      <th>Date</th>
+     <th>Energy</th>
      <th>Time of usage</th>
      <th>Cost</th>
    </tr>

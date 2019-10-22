@@ -37,7 +37,8 @@ export default function MainPage(props) {
         <div id="infoAboutStation">
           {/* { console.log( props.currentMarker)} */}
         <h3> Choose station on the map or in the list</h3>
-      {(props.currentMarker.stationName) ? <StationInfo { ...props.currentMarker } setCurrentStationToNull = { props.setCurrentStationToNull } isLoggedIn = { props.isLoggedIn }/> : props.resultArray.map((item, i) => (
+      {(props.currentMarker.stationName) ? <StationInfo { ...props.currentMarker } setCurrentStationToNull = { props.setCurrentStationToNull } isLoggedIn = { props.isLoggedIn }/> 
+      : props.resultArray.map((item, i) => (
               <BriefStationInfo key={i} setStation = { props.setStation } setCurrentStationToNull = { props.setCurrentStationToNull }  info = {item} />
             ))}
       </div>

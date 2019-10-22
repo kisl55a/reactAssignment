@@ -20,6 +20,9 @@ const StationInfo = (props) => {
             Type: {props.type}
         </div>
         <div>
+            Power: {props.power} <sup>kWh</sup>
+        </div>
+        <div>
             Price: {props.price}<sup>{props.measure}</sup>
         </div>
         { (props.isLoggedIn)? 

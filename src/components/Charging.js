@@ -19,13 +19,14 @@ export default function Charging(props) {
         <div> Station UUID: 
         { props.UUID } </div> 
         <div>The price:
-        { props.currentCharge.cost } </div> EUR
+        { props.currentCharge.cost } <sup>EUR</sup> </div> 
         <div> Your time:
-        { props.currentCharge.timeOfUsage } </div> min
+        { props.currentCharge.timeOfUsage } <sup>min</sup> </div> 
+        <div> Your energy:
+        { props.currentCharge.energy } <sup>kWh</sup> </div> 
+        <br></br>
         <button onClick = { props.stopCharging }> Stop charging</button>
-      </div>
-      
-       
+      </div>       
       : <form onSubmit={ startCharging }>
       <div>
         Enter the Identifier
