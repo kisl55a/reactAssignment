@@ -46,7 +46,17 @@ export default function MainPage(props) {
         </div>
        
       <div className={styles.post3}> 
-      {(props.isLoggedIn) ?  <Charging startCharging = { props.startCharging } />: "You can start charging when you are logged in"}
+      {(props.isLoggedIn) 
+      ? <Charging 
+      startCharging = { props.startCharging } 
+      noChargerNotification = { props.noChargerNotification } 
+      isCharging = { props.isCharging }
+      idCharging = { props.idCharging }
+      UUID = { props.UUID }
+      currentCharge = { props.currentCharge }
+      stopCharging = { props.stopCharging }
+      />
+      : "You can start charging when you are logged in"}
      
       </div>
     </div>

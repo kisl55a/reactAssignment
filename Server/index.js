@@ -44,23 +44,51 @@ app.get('/getData', (req, res) => {
       res.sendStatus(500);
     })
 });
+app.get('/getUserId/:username',
+  passport.authenticate('basic', { session: false }),
+  (req, res) => {
+    db.query('select idUser from users where username = ?', [req.params.username])
+    .then(dbRes => res.send(dbRes))
+    .catch(dbEr => console.log(dbEr))
+  });
 
 app.get('/signIn',
   passport.authenticate('basic', { session: false }),
   (req, res) => res.send(true));
+
+app.get('/history/:idUser',
+  passport.authenticate('basic', { session: false }),
+  (req, res) => {
+    db.query('SELECT charging.idCharging, charging.timeOfUsage, charging.cost, stations.type, charging.timeOfStart, stations.UUID  from charging inner join stations on charging.stationId = stations.stationId where idUser = ?', [req.params.idUser])
+    .then(dbResults => {
+      res.send(dbResults)
+    }).catch(dbEr => console.log(dbEr))
+    
+  })
+
+app.get('/stopCharging/:idCharging',
+  passport.authenticate('basic', { session: false }),
+  (req, res) => {
+    db.query('SELECT charging.stationId from charging inner join stations on charging.stationId = stations.stationId where idCharging = ?', [req.params.idCharging])
+      .then(dbResults => {
+        db.query('UPDATE stations SET isTaken = 0 where stationId = ?', [dbResults[0].stationId])
+          .then(res.send(true))
+          .catch(dbEr => console.log(dbEr))
+      }).catch(dbEr => console.log(dbEr))
+  })
+
 app.get('/startCharging/:UUID',
   passport.authenticate('basic', { session: false }),
   (req, res) => {
-    // console.log(req.params.UUID);
-    db.query('SELECT stationId FROM stations WHERE UUID = ?', [req.params.UUID.toUpperCase()]).then(dbResults => {
-      if (dbResults.length == 0) {
+    db.query('SELECT stationId, measure, isTaken FROM stations WHERE UUID = ?', [req.params.UUID.toUpperCase()]).then(dbResults => {
+      if (dbResults.length == 0 || dbResults[0].isTaken == true) {
         res.send(false)
       } else {
         // console.log(req.user.idUser, dbResults[0].stationId)
-        db.query('INSERT INTO `charging` ( `idUser`, `stationId`, `startTime`, `timeOfUsage`) VALUES (  ?, ?, CURRENT_TIMESTAMP, ?)', [req.user.idUser, dbResults[0].stationId, 1])
+        db.query('INSERT INTO `charging` ( `idUser`, `stationId`, `timeOfStart`, `timeOfUsage`, `measure`, `cost`) VALUES (  ?, ?, CURRENT_TIMESTAMP, ?, ?, ?)', [req.user.idUser, dbResults[0].stationId, 0, dbResults[0].measure, 0])
           .then(
             db.query('UPDATE `stations` SET `isTaken` = 1 WHERE `stationId` = ?', [dbResults[0].stationId])
-              .then(db.query('SELECT MAX(`chargeId`) AS `id` FROM `charging`')
+              .then(db.query('SELECT MAX(`idCharging`) AS `id` FROM `charging`')
                 .then(results => res.send(results[0]))
                 .catch())
               .catch(dbEr => console.log(dbEr))
@@ -69,9 +97,27 @@ app.get('/startCharging/:UUID',
       }
     }).catch(dbError => console.log(dbError))
   })
-// TODO сделать функцию по изменению времени
-// и цены
-
+// TODO подумать над ценой быстрой зарядки
+app.get('/chargingProcess/:idCharging', passport.authenticate('basic', { session: false }),
+  (req, res) => {
+    db.query('SELECT charging.idCharging, charging.stationId, stations.price, stations.type, TIMESTAMPDIFF(MINUTE, timeOfStart, CURRENT_TIMESTAMP()) as time from charging inner join stations on charging.stationId = stations.stationId where idCharging = ?', [req.params.idCharging]).then(dbResults => {
+      if (dbResults[0].type == "Fast") {
+        let currentCost = dbResults[0].time * 0.7 * dbResults[0].price;
+        db.query('UPDATE `charging` SET `cost` = ?, `timeOfUsage` = ? WHERE `charging`.`idCharging` = ?', [currentCost, dbResults[0].time * 0.7, req.params.idCharging])
+          .then()
+          .catch(dbEr => console.log(dbEr))
+      } else {
+        let currentCost = dbResults[0].time * 1 * dbResults[0].price;
+        db.query('UPDATE `charging` SET `cost` = ?, `timeOfUsage` = ? WHERE `charging`.`idCharging` = ?', [currentCost, dbResults[0].time * 1, req.params.idCharging])
+          .then()
+          .catch(dbEr => console.log(dbEr))
+      }
+      db.query('SELECT cost, timeOfUsage from charging where idCharging = ?', [req.params.idCharging])
+        .then(dbRes => res.send(dbRes))
+        .catch(dbEr => console.log(dbEr))
+    })
+      .catch(dbEr => console.log(dbEr))
+  })
 
 app.post('/signUp', (req, res) => {
   let username = req.body.username.trim();
@@ -115,7 +161,8 @@ app.patch('/changeData', (req, res) => {
 
 Promise.all(
   [
-    db.query("CREATE TABLE IF NOT EXISTS charging ( `idCharging` INT NOT NULL AUTO_INCREMENT , `idUser` INT NOT NULL , `stationId` INT NOT NULL , `timeOfStart` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `timeOfUsage` INT NOT NULL , INDEX (`idUser`), INDEX (`stationId`), PRIMARY KEY (`idCharging`)) ENGINE = InnoDB "), db.query("CREATE TABLE IF NOT EXISTS stations(`stationId` INT NOT NULL AUTO_INCREMENT , `stationName` TEXT NOT NULL , `address` TEXT NOT NULL ,`lat` float(50) NOT NULL , `lng` float(50) NOT NULL, `type` varchar(50) NOT NULL , `price` varchar(50) NOT NULL , `measure` TEXT NOT NULL , `isTaken` BOOLEAN NOT NULL DEFAULT FALSE, `UUID` VARCHAR(4) NOT NULL, PRIMARY KEY (`stationId`))"),
+    db.query("CREATE TABLE IF NOT EXISTS charging ( `idCharging` INT NOT NULL AUTO_INCREMENT , `idUser` INT NOT NULL , `stationId` INT NOT NULL , `timeOfStart` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `timeOfUsage` INT NOT NULL , `cost` varchar(50) NOT NULL, `measure` TEXT NOT NULL ,  INDEX (`idUser`), INDEX (`stationId`), PRIMARY KEY (`idCharging`)) ENGINE = InnoDB "),
+    db.query("CREATE TABLE IF NOT EXISTS stations(`stationId` INT NOT NULL AUTO_INCREMENT , `stationName` TEXT NOT NULL , `address` TEXT NOT NULL ,`lat` float(50) NOT NULL , `lng` float(50) NOT NULL, `type` varchar(50) NOT NULL , `price` varchar(50) NOT NULL , `measure` TEXT NOT NULL , `isTaken` BOOLEAN NOT NULL DEFAULT FALSE, `UUID` VARCHAR(4) NOT NULL, PRIMARY KEY (`stationId`))"),
     db.query("CREATE TABLE IF NOT EXISTS users ( `idUser` INT NOT NULL AUTO_INCREMENT , `username` varchar(50) NOT NULL , `email` varchar(50) NOT NULL , `password` varchar(512) NOT NULL , PRIMARY KEY (`idUser`))"),
     db.query("ALTER TABLE `charging` ADD FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`) ON DELETE CASCADE ON UPDATE CASCADE;"),
     db.query("ALTER TABLE `charging` ADD FOREIGN KEY (`stationId`) REFERENCES `stations`(`stationId`) ON DELETE CASCADE ON UPDATE CASCADE;")
@@ -147,7 +194,8 @@ app.post('/addData', (req, res) => {
 // CREATE TABLE `map`.`charging` ( `idCharging` INT NOT NULL AUTO_INCREMENT , `idUser` INT NOT NULL , `stationId` INT NOT NULL , `timeOfStart` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `timeOfUsage` INT NOT NULL , INDEX (`idUser`), INDEX (`stationId`), PRIMARY KEY (`idCharging`)) ENGINE = InnoDB;
 // ALTER TABLE `charging` ADD FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`) ON DELETE CASCADE ON UPDATE CASCADE;
 // ALTER TABLE `charging` ADD FOREIGN KEY (`stationId`) REFERENCES `stations`(`stationId`) ON DELETE CASCADE ON UPDATE CASCADE;
-//db.query('INSERT INTO `charging` (`chargeId`, `idUser`, `stationId`, `startTime`, `timeOfUsage`) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?))'.then(results => {
-  // db.query('SELECT TIMESTAMPDIFF(MINUTE, startTime, CURRENT_TIMESTAMP()) from charging where chargeId = 101', [])
+//db.query('INSERT INTO `charging` (`idCharging`, `idUser`, `stationId`, `timeOfStart`, `timeOfUsage`) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?))'.then(results => {
+  // db.query('SELECT TIMESTAMPDIFF(MINUTE, timeOfStart, CURRENT_TIMESTAMP()) from charging where idCharging = 101', [])
   //       .then(results => { res.send(results)})
   //       .catch()
+// SELECT charging.stationId, stations.price, charging.idCharging from charging inner join stations on charging.stationId = stations.stationId where idCharging = 1

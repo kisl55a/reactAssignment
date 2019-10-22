@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './Main.module.css';
-export default function Login(props) {
+export default function Register(props) {
   function register(event)
   {
     event.preventDefault();
