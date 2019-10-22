@@ -1,17 +1,16 @@
 import React from 'react'
-import styles from './Main.module.css';
 export default function Register(props) {
   function register(event)
   {
     event.preventDefault();
     if ( event.target['password'].value !==  event.target['password1'].value) {
-        // TODO if the passwords don't match
     } else {
         props.register(
             event.target['username'].value,
             event.target['email'].value,
             event.target['password'].value,
           );
+          if ( props.message != "")
           props.history.goBack();
     }
     
@@ -22,6 +21,7 @@ export default function Register(props) {
   {
     event.preventDefault();
     props.history.goBack();
+    props.setMessageToNull();  
   }
 
   return (
@@ -47,7 +47,7 @@ export default function Register(props) {
         <button onClick={ cancel }>Cancel</button>
         <button type="submit">Register</button>
       </form>
-      <div id = "message" className ={ styles.hidden }> { props.message } </div>
+      <div id = "message" > { props.message } </div>
         
     </div>
   )

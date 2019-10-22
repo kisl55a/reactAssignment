@@ -20,16 +20,21 @@ export default function MainPage(props) {
         <input type="text" onChange={ updateSearchFilter }/>
       
       {(props.isLoggedIn !== true) ?
-          <div> <Link to="/login">
+          <div> <div> { props.message }</div>
+          <Link to="/login">
             <button> Login </button>
           </Link>
             <Link to="/registration">
               <button>Registration</button>
-            </Link>  </div>
+            </Link>   </div>
+           
           :
+          <div> 
           <Link to="/profile">
             <button>Profile</button>
           </Link>
+          <button onClick = { props.logout }>Logout</button>
+          </div>
         }
 
       </div>

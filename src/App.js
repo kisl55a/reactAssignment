@@ -34,7 +34,7 @@ export default class App extends Component {
       UUID: "",
       idCharging: "",
       noChargerNotification: "",
-      currentCharge :{},
+      currentCharge: {},
     }
   };
   componentDidMount = () => {
@@ -45,6 +45,15 @@ export default class App extends Component {
       .catch(error => {
         console.error(error);
       })
+  }
+
+  logout = () => {
+    this.setState({
+      isLoggedIn: false,
+      username: "",
+      password: "",
+      idUser: null,
+    })
   }
 
   login = (username, password) => {
@@ -67,17 +76,26 @@ export default class App extends Component {
               password: password
             },
           })
-            .then( response => { 
-              this.setState({idUser: response.data[0].idUser})
+            .then(response => {
+              this.setState({ idUser: response.data[0].idUser })
               this.getUserHistory();
             })
-            .catch( err => console.log(err))
+            .catch(err => {
+              console.log(err)
+            
+            })
+            
         })
       .catch(error => {
+        this.setState({
+          message : "Incorrect username or password"
+        })
+        return false
+
         console.error(error);
       });
-     
-      
+
+
   }
   register = (username, email, password) => {
     console.log(email, password, username)
@@ -86,14 +104,16 @@ export default class App extends Component {
       email: email,
       password: password,
     })
-      .then(function (response) {
+      .then((response) => {
         console.log(response);
+        this.setState({ message: response.data })
       })
-      .catch(function (error) {
+      .catch((error) => {
         console.log(error);
       });
   }
 
+  setMessageToNull = () => this.setState({ message: "" })
   textInputChange = (value) => {
     this.setState({ arr: this.state.Markers.filter(({ stationName }) => stationName.toLowerCase().indexOf(value.toLowerCase()) >= 0) });
     // this.setState({ arr : this.state.arr.length = 5})
@@ -118,48 +138,48 @@ export default class App extends Component {
   }
 
   refreshData = () => {
-   let frequency = 60;
-   axios.get(`http://localhost:4000/chargingProcess/${this.state.idCharging}`, {
-    auth: {
-      username: this.state.username,
-      password: this.state.password,
-    },
-  }).then(response => {
-    console.log(response.data)
-    this.setState({ currentCharge: {...response.data[0]} })
-  })
-    .catch()
+    let frequency = 60;
+    axios.get(`http://localhost:4000/chargingProcess/${this.state.idCharging}`, {
+      auth: {
+        username: this.state.username,
+        password: this.state.password,
+      },
+    }).then(response => {
+      // console.log(response.data)
+      this.setState({ currentCharge: { ...response.data[0] } })
+    })
+      .catch()
     this.getUserHistory();
     if (this.state.isCharging) {
       setTimeout(this.refreshData, frequency * 1000);
-    } 
+    }
   }
 
-getUserHistory = () => {
-  axios.get(`http://localhost:4000/history/${this.state.idUser}`, {
-    auth: {
-      username: this.state.username,
-      password: this.state.password,
-    },
-  })
-  .then(response => this.setState({ userHistory : response.data}))
-  .catch(error => console.log(error))
- 
-}
+  getUserHistory = () => {
+    axios.get(`http://localhost:4000/history/${this.state.idUser}`, {
+      auth: {
+        username: this.state.username,
+        password: this.state.password,
+      },
+    })
+      .then(response => this.setState({ userHistory: response.data }))
+      .catch(error => console.log(error))
 
-stopCharging = () => {
-  this.setState({ isCharging : false })
-  axios.get(`http://localhost:4000/stopCharging/${this.state.idCharging}`, {
-    auth: {
-      username: this.state.username,
-      password: this.state.password,
-    },
-  })
-  .then(response => console.log(response.data))
-  .catch(error => console.log(error))
-}
+  }
 
- startCharging = (UUID) => {
+  stopCharging = () => {
+    this.setState({ isCharging: false })
+    axios.get(`http://localhost:4000/stopCharging/${this.state.idCharging}`, {
+      auth: {
+        username: this.state.username,
+        password: this.state.password,
+      },
+    })
+      .then(response => console.log(response.data))
+      .catch(error => console.log(error))
+  }
+
+  startCharging = (UUID) => {
     if (UUID === "") {
       UUID = 0
     }
@@ -197,7 +217,7 @@ stopCharging = () => {
       if (e.stationName === childProps.text) {
         marker = e
       }
-      console.log(this.state.userHistory);
+      // console.log(this.state.userHistory);
     });
     this.setState({
       center: {
@@ -214,17 +234,35 @@ stopCharging = () => {
         <main>
           <Router>
             <Route path="/station/:id" exact render={routeProps => <StationInfo {...routeProps} getInfoAboutStation={this.getInfoAboutStation} />} />
-            <Route path="/login" exact render={routeProps => <Login login={this.login} {...routeProps} />} />
-            <Route path="/profile" exact render={routeProps => <Profile userHistory = { this.state.userHistory } {...routeProps} />} />
-            <Route path="/registration" exact render={routeProps => <Registration  {...routeProps} register={this.register} message='' />} />
+            <Route path="/login" exact render={
+              (routeProps) => 
+              <Login 
+              login={ this.login } 
+              {...routeProps} 
+              username = { this.state.username }
+              message = {this.state.message}
+              setMessageToNull = { this.setMessageToNull }
+              />} 
+              
+              />
+            <Route path="/profile" exact render={routeProps => <Profile userHistory={this.state.userHistory} {...routeProps} />} />
+            <Route path="/registration" exact render={routeProps =>
+              <Registration
+                {...routeProps}
+                register={this.register}
+                message={this.state.message}
+                setMessageToNull={ this.setMessageToNull }
+              />} />
             <Route path="/" exact render={
               (routeProps) =>
                 <MainPage
+                  logout = { this.logout}
+                  message = {this.state.message}
                   currentMarker={this.state.currentMarker}
                   isLoggedIn={this.state.isLoggedIn}
                   onSearchFilterUpdate={this.textInputChange}
                   showSearchResults={this.state.showSearchResults}
-                  resultArray = { this.state.arr.slice(0,8) }
+                  resultArray={this.state.arr.slice(0, 8)}
                   setStation={this.setCurrentStation}
                   setCurrentStationToNull={this.setCurrentStationToNull}
                   startCharging={this.startCharging}
@@ -232,8 +270,8 @@ stopCharging = () => {
                   isCharging={this.state.isCharging}
                   UUID={this.state.UUID}
                   idCharging={this.state.idCharging}
-                  currentCharge = { this.state.currentCharge }
-                  stopCharging = { this.stopCharging }
+                  currentCharge={this.state.currentCharge}
+                  stopCharging={this.stopCharging}
                 />
             } />
           </Router>
@@ -241,11 +279,11 @@ stopCharging = () => {
 
         <div style={{ height: '100vh', width: '100%' }}>
           <GoogleMapReact
-             bootstrapURLKeys={{
+            bootstrapURLKeys={{
               language: 'en',
-              region: 'fi',            
+              region: 'fi',
             }}
-            
+
             center={this.state.center}
             bootstrapURLKeys={{ key: "AIzaSyBQc4fDzvIrxXU2Md73EjyY6oXWspFCMSY" }}
             zoom={this.state.zoom}
@@ -253,8 +291,8 @@ stopCharging = () => {
           >
             {
               this.state.Markers.map((item, i) => (
-              <Marker key={i} lat={item.lat} lng={item.lng} isTaken={item.isTaken} type={item.type} text={item.stationName} />
-            ))
+                <Marker key={i} lat={item.lat} lng={item.lng} isTaken={item.isTaken} type={item.type} text={item.stationName} />
+              ))
             }
           </GoogleMapReact>
         </div>

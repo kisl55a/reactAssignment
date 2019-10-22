@@ -16,8 +16,8 @@ export default function Charging(props) {
       {(props.isCharging) 
       ? 
       <div> 
-        <div> Station UUID: 
-        { props.UUID } </div> 
+        <div> Station UUID:  
+         { props.UUID.toUpperCase() } </div> 
         <div>The price:
         { props.currentCharge.cost } <sup>EUR</sup> </div> 
         <div> Your time:

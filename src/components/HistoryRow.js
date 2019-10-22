@@ -9,7 +9,7 @@ export default function HistoryRow(props) {
             <th> { props.energy }</th>
             <th>{props.timeOfUsage} <sup> MIN </sup></th>
             <th>{props.cost} <sup> EUR </sup></th>
-            {console.log(props)}
+            {/* {console.log(props)} */}
         </tr>
     )
 }

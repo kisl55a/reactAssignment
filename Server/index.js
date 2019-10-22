@@ -18,7 +18,6 @@ passport.use(new Strategy((username, password, cb) => {
     if (dbResults.length == 0) {
       return cb(null, false);
     }
-
     bcrypt.compare(password, dbResults[0].password).then(bcryptResult => {
       if (bcryptResult == true) {
         cb(null, dbResults[0]);
@@ -28,7 +27,7 @@ passport.use(new Strategy((username, password, cb) => {
       }
     })
 
-  }).catch(dbError => cb(dbError))
+  }).catch(dbError => cb(res.send(false)))
 }));
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -97,7 +96,7 @@ app.get('/startCharging/:UUID',
       }
     }).catch(dbError => console.log(dbError))
   })
-// TODO подумать над ценой быстрой зарядки
+  
 app.get('/chargingProcess/:idCharging', passport.authenticate('basic', { session: false }),
   (req, res) => {
     db.query('SELECT charging.idCharging, stations.power, charging.stationId, stations.price, stations.type, TIMESTAMPDIFF(MINUTE, timeOfStart, CURRENT_TIMESTAMP()) as time from charging inner join stations on charging.stationId = stations.stationId where idCharging = ?', [req.params.idCharging]).then(dbResults => {
@@ -132,32 +131,15 @@ app.post('/signUp', (req, res) => {
     )
       .then(dbResults => {
         console.log(dbResults);
-        res.sendStatus(201);
+        // res.sendStatus(201);
       })
       .catch(error => res.sendStatus(500));
   }
   else {
-    console.log("incorrect username or password, both must be strings and username more than 4 long and password more than 6 characters long");
-    res.sendStatus(400);
+    res.send("Incorrect username or password, both must be strings and username more than 4 long and password more than 6 characters long");
   }
 });
 
-app.patch('/changeData', (req, res) => {
-  //  отправлять промисы после выполнения лупы
-  let data = req.body;
-  Promise.all([
-    data.forEach(element => {
-      db.query('UPDATE data SET name = (?), description = (?) , company = (?), price = (?), currency = (?), ship = (?), image = (?) WHERE data.id =(?)', [element.name, element.description, element.company, element.price, element.currency, element.ship, element.image, element.id])
-    })]
-  ).then((response) => {
-    res.send('succesfull');
-  })
-    .catch((err) => {
-      console.log(err);
-      // res.send(err);
-    })
-});
-// Do not accept "delete" request
 
 Promise.all(
   [
@@ -190,11 +172,3 @@ app.post('/addData', (req, res) => {
       // res.send(err);
     })
 });
-// CREATE TABLE `map`.`charging` ( `idCharging` INT NOT NULL AUTO_INCREMENT , `idUser` INT NOT NULL , `stationId` INT NOT NULL , `timeOfStart` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `timeOfUsage` INT NOT NULL , INDEX (`idUser`), INDEX (`stationId`), PRIMARY KEY (`idCharging`)) ENGINE = InnoDB;
-// ALTER TABLE `charging` ADD FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`) ON DELETE CASCADE ON UPDATE CASCADE;
-// ALTER TABLE `charging` ADD FOREIGN KEY (`stationId`) REFERENCES `stations`(`stationId`) ON DELETE CASCADE ON UPDATE CASCADE;
-//db.query('INSERT INTO `charging` (`idCharging`, `idUser`, `stationId`, `timeOfStart`, `timeOfUsage`) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?))'.then(results => {
-  // db.query('SELECT TIMESTAMPDIFF(MINUTE, timeOfStart, CURRENT_TIMESTAMP()) from charging where idCharging = 101', [])
-  //       .then(results => { res.send(results)})
-  //       .catch()
-// SELECT charging.stationId, stations.price, charging.idCharging from charging inner join stations on charging.stationId = stations.stationId where idCharging = 1

@@ -15,7 +15,7 @@
     grid-template-areas: "post-1 "  
                          "post-2 "  
                          "post-3 "; 
-                         grid-template-rows:  minmax(100px, 150px) minmax(70px, 40vh) auto ;
+                         grid-template-rows:  minmax(100px, 180px) minmax(70px, 40vh) auto ;
 }
 .post-1 {
     grid-area: post-1;
@@ -29,6 +29,12 @@
 
  
   .da {
+    font-size: 20%
+  }
+  path{
+    cursor: pointer;
+  }
+  i{
     cursor: pointer;
   }
 input {
