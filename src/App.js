@@ -129,7 +129,7 @@ export default class App extends Component {
         lat: currentStation.lat,
         lng: currentStation.lng
       },
-      zoom: 14
+      zoom: 16
     })
   }
 
@@ -175,7 +175,10 @@ export default class App extends Component {
         password: this.state.password,
       },
     })
-      .then(response => console.log(response.data))
+      .then(response => {
+        console.log(response.data);
+        this.componentDidMount();
+      })
       .catch(error => console.log(error))
   }
 
@@ -200,7 +203,8 @@ export default class App extends Component {
                 noChargerNotification: ""
               }
             )
-            this.refreshData()
+            this.refreshData();
+            this.componentDidMount();
           } else {
             this.setState({
               noChargerNotification: "No charger with such ID or it's taken already"
@@ -224,7 +228,7 @@ export default class App extends Component {
         lat: childProps.lat,
         lng: childProps.lng
       },
-      zoom: 14,
+      zoom: 16,
       currentMarker: marker,
     })
   }

@@ -11,7 +11,9 @@ const StationInfo = (props) => {
              {props.stationName}
             </h4>
         </div>
-
+        <div>
+            Status: {(props.isTaken === 1) ? "taken" : " free"}
+        </div>
         <div>
             Address: {props.address}
         </div>

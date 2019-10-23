@@ -15,7 +15,7 @@
     grid-template-areas: "post-1 "  
                          "post-2 "  
                          "post-3 "; 
-                         grid-template-rows:  minmax(100px, 180px) minmax(70px, 40vh) auto ;
+                         grid-template-rows:  minmax(100px, auto) minmax(70px, auto) auto ;
 }
 .post-1 {
     grid-area: post-1;
@@ -39,4 +39,12 @@
   }
 input {
  margin-bottom: 2%;
+}
+.station{
+ width: 20px;
+ cursor: pointer;
+}
+.stationTaken {
+  width: 20px;
+  opacity: 0.4 ;
 }

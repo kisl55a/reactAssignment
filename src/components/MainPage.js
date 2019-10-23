@@ -17,7 +17,7 @@ export default function MainPage(props) {
        <h4> Plug here </h4>
        <br></br>
        
-        <input type="text" onChange={ updateSearchFilter }/>
+       
       
       {(props.isLoggedIn !== true) ?
           <div> <div> { props.message }</div>
@@ -40,8 +40,9 @@ export default function MainPage(props) {
       </div>
       <div id="mainInfo" className={ styles.post2 }>
         <div id="infoAboutStation">
-          {/* { console.log( props.currentMarker)} */}
-        <h3> Choose station on the map or in the list</h3>
+          <h4>Search</h4>
+        <input type="text" onChange={ updateSearchFilter }/>
+        <h3> Choose station on the map, in the list</h3>
       {(props.currentMarker.stationName) ? <StationInfo { ...props.currentMarker } setCurrentStationToNull = { props.setCurrentStationToNull } isLoggedIn = { props.isLoggedIn }/> 
       : props.resultArray.map((item, i) => (
               <BriefStationInfo key={i} setStation = { props.setStation } setCurrentStationToNull = { props.setCurrentStationToNull }  info = {item} />
