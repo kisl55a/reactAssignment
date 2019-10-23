@@ -1,4 +1,6 @@
 import React from 'react'
+import styles from './Main.module.css';
+
 export default function Register(props) {
   function register(event)
   {
@@ -10,7 +12,7 @@ export default function Register(props) {
             event.target['email'].value,
             event.target['password'].value,
           );
-          if ( props.message != "")
+          if ( props.message === "Created")
           props.history.goBack();
     }
     
@@ -25,10 +27,11 @@ export default function Register(props) {
   }
 
   return (
-    <div>
-      <form  onSubmit={ register }>
+    <div className = { styles.generalGrid, styles.registration}>
+      <form   onSubmit={ register }>
+      <h2>Registration</h2> 
         <div>
-          Username
+         Username
         </div>
         <input type="text" name="username" />
         <div>
@@ -43,11 +46,12 @@ export default function Register(props) {
           Password
         </div>
         <input type="password" name="password1" />
-
-        <button onClick={ cancel }>Cancel</button>
+        <br></br>
+        <button onClick={ cancel }>Back</button>
         <button type="submit">Register</button>
+        <div id = "message" > { props.message } </div>
       </form>
-      <div id = "message" > { props.message } </div>
+     
         
     </div>
   )

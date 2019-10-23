@@ -40,7 +40,7 @@ export default class App extends Component {
   componentDidMount = () => {
     axios.get('http://localhost:4000/getData').then(result => {
       this.setState({ Markers: result.data })
-      this.setState({ arr: result.data })
+      this.setState({ arr: result.data})
     })
       .catch(error => {
         console.error(error);
@@ -90,9 +90,9 @@ export default class App extends Component {
         this.setState({
           message : "Incorrect username or password"
         })
-        return false
+        // return false
 
-        console.error(error);
+        // console.error(error);
       });
 
 
@@ -102,7 +102,7 @@ export default class App extends Component {
     axios.post('http://localhost:4000/signUp', {
       username: username,
       email: email,
-      password: password,
+      password: password
     })
       .then((response) => {
         console.log(response);
@@ -115,11 +115,11 @@ export default class App extends Component {
 
   setMessageToNull = () => this.setState({ message: "" })
   textInputChange = (value) => {
+   
     this.setState({ arr: this.state.Markers.filter(({ stationName }) => stationName.toLowerCase().indexOf(value.toLowerCase()) >= 0) });
     // this.setState({ arr : this.state.arr.length = 5})
     this.setState({ currentMarker: {} })
     // ( this.state.arr.length != 0) ? this.setState( {showSearchResults: true}) : this.setState( {showSearchResults: false})
-    console.log(this.state.isLoggedIn)
   }
 
   setCurrentStation = (currentStation) => {

@@ -1,5 +1,5 @@
 import React from 'react'
-
+import styles from './Main.module.css';
 export default function Charging(props) {
 
   function startCharging(event)
@@ -15,15 +15,15 @@ export default function Charging(props) {
     <div>
       {(props.isCharging) 
       ? 
-      <div> 
-        <div> Station UUID:  
-         { props.UUID.toUpperCase() } </div> 
+      <div className = { styles.chargingInfo }> 
+        <h5 className={ styles.infoHeader}> Station UUID:  
+         { props.UUID.toUpperCase() } </h5> 
         <div>The price:
         { props.currentCharge.cost } <sup>EUR</sup> </div> 
         <div> Your time:
         { props.currentCharge.timeOfUsage } <sup>min</sup> </div> 
-        <div> Your energy:
-        { props.currentCharge.energy } <sup>kWh</sup> </div> 
+         Your energy:
+        { props.currentCharge.energy } <sup>kWh</sup>  
         <br></br>
         <button onClick = { props.stopCharging }> Stop charging</button>
       </div>       
@@ -33,7 +33,7 @@ export default function Charging(props) {
       </div>
       <div> { props.noChargerNotification }</div>
       <input type="text" name="identifier" />
-      <button type='submit'> Start charging</button>
+      <button type='submit' className = { styles.buttonGreen }> Start charging</button>
     </form>
     
   }

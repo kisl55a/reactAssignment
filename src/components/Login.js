@@ -1,4 +1,6 @@
 import React from 'react'
+import styles from './Main.module.css';
+
 export default function Login(props) {
 
   function login(event)
@@ -18,7 +20,8 @@ export default function Login(props) {
   }
 
   return (
-    <div>
+    <div className = { styles.generalGrid, styles.registration }>
+      <h2> Login </h2>
       <form onSubmit={ login }>
         <div>
           Nickname

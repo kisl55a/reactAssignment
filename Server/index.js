@@ -131,7 +131,7 @@ app.post('/signUp', (req, res) => {
     )
       .then(dbResults => {
         console.log(dbResults);
-        // res.sendStatus(201);
+        res.sendStatus(201);
       })
       .catch(error => res.sendStatus(500));
   }

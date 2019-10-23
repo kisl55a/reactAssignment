@@ -1,16 +1,18 @@
 import React from 'react';
+import styles from './Main.module.css';
+
 // import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 
 const StationInfo = (props) => {
     function back() {
         props.setCurrentStationToNull();
     }
-    return (<div>
-        <div >
-            <h4>
+    return (<div className = { styles.stationInfo }>
+    
+            <h4 className = { styles.infoHeader}>
              {props.stationName}
             </h4>
-        </div>
+       
         <div>
             Status: {(props.isTaken === 1) ? "taken" : " free"}
         </div>

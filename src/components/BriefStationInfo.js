@@ -1,5 +1,5 @@
 import React from 'react';
-// import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import styles from './Main.module.css';
 
 const StationInfo = (props) => {
 
@@ -7,9 +7,9 @@ const StationInfo = (props) => {
            props.setStation(props.info)
     }
 
-    return (<div>
+    return (<div className = { styles.zebra }>
 
-        <div onClick={setCurrentStation}>
+        <div className = { styles.searchRes } onClick={setCurrentStation}>
             {props.info.stationName}
         </div>
     </div>)

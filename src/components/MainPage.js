@@ -14,37 +14,39 @@ export default function MainPage(props) {
   return (
     <div className={styles.gridForMenu}>
       <div className={styles.post1}>  
-       <h4> Plug here </h4>
+      <img className={ styles.logo } src={`http://pngimg.com/uploads/electric_car/electric_car_PNG43.png`}></img>
        <br></br>
        
        
       
       {(props.isLoggedIn !== true) ?
-          <div> <div> { props.message }</div>
+          <div> 
+            <div> { props.message }</div>
           <Link to="/login">
-            <button> Login </button>
+            <button className = { styles.buttonGreen }> Login </button>
           </Link>
             <Link to="/registration">
-              <button>Registration</button>
+              <button className = { styles.buttonGreen }>Registration</button>
             </Link>   </div>
            
           :
           <div> 
           <Link to="/profile">
-            <button>Profile</button>
+            <button className = { styles.buttonGreen }>Profile</button>
           </Link>
-          <button onClick = { props.logout }>Logout</button>
+          <button className = { styles.buttonBlue } onClick = { props.logout }>Logout</button>
           </div>
         }
 
       </div>
-      <div id="mainInfo" className={ styles.post2 }>
+      <div id="mainInfo" className={ styles.post2}>
         <div id="infoAboutStation">
-          <h4>Search</h4>
-        <input type="text" onChange={ updateSearchFilter }/>
+        
         <h3> Choose station on the map, in the list</h3>
-      {(props.currentMarker.stationName) ? <StationInfo { ...props.currentMarker } setCurrentStationToNull = { props.setCurrentStationToNull } isLoggedIn = { props.isLoggedIn }/> 
-      : props.resultArray.map((item, i) => (
+        <input type="search" placeholder="Search" onChange={ updateSearchFilter }/> <br></br>
+      {(props.currentMarker.stationName) ? 
+      <StationInfo { ...props.currentMarker } setCurrentStationToNull = { props.setCurrentStationToNull } isLoggedIn = { props.isLoggedIn }/> 
+      : (props.resultArray.length === 0) ? " No results" : props.resultArray.map((item, i) => (
               <BriefStationInfo key={i} setStation = { props.setStation } setCurrentStationToNull = { props.setCurrentStationToNull }  info = {item} />
             ))}
       </div>
