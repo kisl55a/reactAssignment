@@ -32,7 +32,7 @@ const StationInfo = (props) => {
         { (props.isLoggedIn)? 
         <div>  Identifier: { props.UUID }</div> :
         <div></div>    }
-        <div> <button onClick = { back }> Back </button></div>
+        <div> <button className = { styles.cancelButtonMainPage } onClick = { back }> Back </button></div>
     </div>)
 
 }

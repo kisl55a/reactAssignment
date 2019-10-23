@@ -14,7 +14,7 @@ export default function MainPage(props) {
   return (
     <div className={styles.gridForMenu}>
       <div className={styles.post1}>  
-      <img className={ styles.logo } src={`http://pngimg.com/uploads/electric_car/electric_car_PNG43.png`}></img>
+      <img className={ styles.logo } src={`images/logo.png`}></img>
        <br></br>
        
        
@@ -42,7 +42,7 @@ export default function MainPage(props) {
       <div id="mainInfo" className={ styles.post2}>
         <div id="infoAboutStation">
         
-        <h3> Choose station on the map, in the list</h3>
+        <h3> Choose station on the map/list or search</h3>
         <input type="search" placeholder="Search" onChange={ updateSearchFilter }/> <br></br>
       {(props.currentMarker.stationName) ? 
       <StationInfo { ...props.currentMarker } setCurrentStationToNull = { props.setCurrentStationToNull } isLoggedIn = { props.isLoggedIn }/> 

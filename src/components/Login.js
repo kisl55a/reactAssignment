@@ -33,8 +33,8 @@ export default function Login(props) {
         </div>
         <input type="password" name="password" />
 
-        <button onClick={ cancel }>Cancel</button>
-        <button type="submit">Login</button>
+        <button className = { styles.cancelButton } onClick={ cancel }>Cancel</button>
+        <button className = { styles.proceedButton } type="submit">Login</button>
       </form>
     </div>
   )

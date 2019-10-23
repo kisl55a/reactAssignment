@@ -25,7 +25,7 @@ export default function Charging(props) {
          Your energy:
         { props.currentCharge.energy } <sup>kWh</sup>  
         <br></br>
-        <button onClick = { props.stopCharging }> Stop charging</button>
+        <button className = { styles.cancelButtonMainPage } onClick = { props.stopCharging }> Stop charging</button>
       </div>       
       : <form onSubmit={ startCharging }>
       <div>

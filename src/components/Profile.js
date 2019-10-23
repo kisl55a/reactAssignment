@@ -18,9 +18,9 @@ export default function Login(props) {
          <tr>
      <th>Station Number</th>
      <th>Date</th>
-     <th>Energy</th>
-     <th>Time of usage</th>
-     <th>Cost</th>
+     <th>Energy(kWt)</th>
+     <th>Time of usage(min)</th>
+     <th>Cost(EUR)</th>
    </tr>
    <tbody>
         {props.userHistory.map((item, i) => (
@@ -32,7 +32,7 @@ export default function Login(props) {
             }
            
      
-      <button onClick={ cancel }>Back</button>
+      <button className = { styles.cancelButton } onClick={ cancel }>Back</button>
       <div id = "message" className ={ styles.hidden }> { props.message } </div>
         
     </div>

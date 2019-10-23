@@ -47,8 +47,8 @@ export default function Register(props) {
         </div>
         <input type="password" name="password1" />
         <br></br>
-        <button onClick={ cancel }>Back</button>
-        <button type="submit">Register</button>
+        <button className = { styles.cancelButton } onClick={ cancel }>Back</button>
+        <button className = { styles.proceedButton } type="submit">Register</button>
         <div id = "message" > { props.message } </div>
       </form>
      
