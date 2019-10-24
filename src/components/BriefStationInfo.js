@@ -4,15 +4,25 @@ import styles from './Main.module.css';
 const StationInfo = (props) => {
 
     function setCurrentStation() {
-           props.setStation(props.info)
+        props.setStation(props.info)
     }
 
-    return (<div className = { styles.zebra }>
+    if (props.info.isTaken !== 1) {
+        return (<div className={styles.zebra}>
 
-        <div className = { styles.searchRes } onClick={setCurrentStation}>
-            {props.info.stationName}
-        </div>
-    </div>)
+            <div className={styles.searchRes} onClick={setCurrentStation}>
+                {props.info.stationName}
+            </div>
+        </div>)
+    } else {
+        return (<div className={styles.zebra}>
+            
+            <div className={styles.searchResTaken} onClick={setCurrentStation}>
+                {props.info.stationName}
+            </div>
+        </div>)
+    }
+
 
 }
 

@@ -12,18 +12,6 @@
         "UUID": "AAA1"
     },
     {
-        "stationId": 2,
-        "stationName": "Peltola",
-        "address": "Peltolankaari 6,\r\n90230 Oulu",
-        "lat": 65.012615,
-        "lng": 25.51618,
-        "type": "Fast",
-        "power": 100,
-        "price": 0.18,
-        "measure": "e/kWh",
-        "UUID": "AAA2"
-    },
-    {
         "stationId": 3,
         "stationName": "Torikatu 20",
         "address": "Torikatu 20, 90100 Oulu",
@@ -49,7 +37,7 @@
     },
     {
         "stationId": 5,
-        "stationName": "Peltola",
+        "stationName": "Square",
         "address": "Kaarlenväylä 3, 90100 Oulu",
         "lat": 65.015447,
         "lng": 25.462446,
@@ -105,7 +93,7 @@
         "power": 150,
         "price": 0.18,
         "measure": "e/kWh",
-        "UUID": "AAA2"
+        "UUID": "WAA2"
     },
     {
         "stationId": 10,
@@ -238,5 +226,17 @@
         "price": 0.18,
         "measure": "e/kWh",
         "UUID": "CY26"
+    },
+    {
+        "stationId": 2,
+        "stationName": "Kotkantie 1",
+        "address": "Kotkantie 1, 90250 Oulu",
+        "lat": 65.000778,
+        "lng":  25.511068,
+        "type": "Fast",
+        "power": 100,
+        "price": 0.18,
+        "measure": "e/kWh",
+        "UUID": "AAN2"
     }
 ]

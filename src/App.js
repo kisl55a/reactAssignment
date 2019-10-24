@@ -37,10 +37,11 @@ export default class App extends Component {
       currentCharge: {},
     }
   };
+  
   componentDidMount = () => {
     axios.get('http://localhost:4000/getData').then(result => {
       this.setState({ Markers: result.data })
-      this.setState({ arr: result.data})
+      this.setState({ arr: result.data })
     })
       .catch(error => {
         console.error(error);
@@ -48,11 +49,13 @@ export default class App extends Component {
   }
 
   logout = () => {
+    this.stopCharging();
     this.setState({
       isLoggedIn: false,
       username: "",
       password: "",
       idUser: null,
+      UUID: ""
     })
   }
 
@@ -82,21 +85,17 @@ export default class App extends Component {
             })
             .catch(err => {
               console.log(err)
-            
+
             })
-            
+
         })
       .catch(error => {
         this.setState({
-          message : "Incorrect username or password"
+          message: "Incorrect username or password"
         })
-        // return false
-
-        // console.error(error);
       });
-
-
   }
+
   register = (username, email, password) => {
     console.log(email, password, username)
     axios.post('http://localhost:4000/signUp', {
@@ -115,7 +114,6 @@ export default class App extends Component {
 
   setMessageToNull = () => this.setState({ message: "" })
   textInputChange = (value) => {
-   
     this.setState({ arr: this.state.Markers.filter(({ stationName }) => stationName.toLowerCase().indexOf(value.toLowerCase()) >= 0) });
     // this.setState({ arr : this.state.arr.length = 5})
     this.setState({ currentMarker: {} })
@@ -176,7 +174,6 @@ export default class App extends Component {
       },
     })
       .then(response => {
-        console.log(response.data);
         this.componentDidMount();
       })
       .catch(error => console.log(error))
@@ -194,7 +191,7 @@ export default class App extends Component {
     })
       .then(
         response => {
-          if (response.data != false) {
+          if (response.data !== false) {
             this.setState(
               {
                 isCharging: true,
@@ -215,6 +212,7 @@ export default class App extends Component {
         console.error(error);
       });
   }
+
   _onChildClick = (key, childProps) => {
     let marker
     this.state.Markers.forEach(e => {
@@ -232,6 +230,7 @@ export default class App extends Component {
       currentMarker: marker,
     })
   }
+
   render() {
     return (
       <div className={styles.generalGrid}>
@@ -239,34 +238,33 @@ export default class App extends Component {
           <Router>
             <Route path="/station/:id" exact render={routeProps => <StationInfo {...routeProps} getInfoAboutStation={this.getInfoAboutStation} />} />
             <Route path="/login" exact render={
-              (routeProps) => 
-              <Login 
-              login={ this.login } 
-              {...routeProps} 
-              username = { this.state.username }
-              message = {this.state.message}
-              setMessageToNull = { this.setMessageToNull }
-              />} 
-              
-              />
+              (routeProps) =>
+                <Login
+                  login={this.login}
+                  {...routeProps}
+                  username={this.state.username}
+                  message={this.state.message}
+                  setMessageToNull={this.setMessageToNull}
+                />}
+            />
             <Route path="/profile" exact render={routeProps => <Profile userHistory={this.state.userHistory} {...routeProps} />} />
             <Route path="/registration" exact render={routeProps =>
               <Registration
                 {...routeProps}
                 register={this.register}
                 message={this.state.message}
-                setMessageToNull={ this.setMessageToNull }
+                setMessageToNull={this.setMessageToNull}
               />} />
             <Route path="/" exact render={
               (routeProps) =>
                 <MainPage
-                  logout = { this.logout}
-                  message = {this.state.message}
+                  logout={this.logout}
+                  message={this.state.message}
                   currentMarker={this.state.currentMarker}
                   isLoggedIn={this.state.isLoggedIn}
                   onSearchFilterUpdate={this.textInputChange}
                   showSearchResults={this.state.showSearchResults}
-                  resultArray={this.state.arr.slice(0, 8)}
+                  resultArray={this.state.arr.slice(0, 7)}
                   setStation={this.setCurrentStation}
                   setCurrentStationToNull={this.setCurrentStationToNull}
                   startCharging={this.startCharging}
@@ -281,13 +279,8 @@ export default class App extends Component {
           </Router>
         </main>
 
-        <div style={{ height: '100vh', width: '100%' }}>
+        <div className = {styles.map}>
           <GoogleMapReact
-            bootstrapURLKeys={{
-              language: 'en',
-              region: 'fi',
-            }}
-
             center={this.state.center}
             bootstrapURLKeys={{ key: "AIzaSyBQc4fDzvIrxXU2Md73EjyY6oXWspFCMSY" }}
             zoom={this.state.zoom}
@@ -302,6 +295,5 @@ export default class App extends Component {
         </div>
       </div>
     );
-
   }
 }

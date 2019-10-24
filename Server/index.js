@@ -14,7 +14,6 @@ app.use(cors())
 
 passport.use(new Strategy((username, password, cb) => {
   db.query('SELECT idUser, username, password FROM users WHERE username = ?', [username]).then(dbResults => {
-
     if (dbResults.length == 0) {
       return cb(null, false);
     }
@@ -29,12 +28,14 @@ passport.use(new Strategy((username, password, cb) => {
 
   }).catch(dbError => cb(res.send(false)))
 }));
+
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, PUT, PATCH, POST, DELETE");
   res.header("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
+
 app.get('/getData', (req, res) => {
   db.query('SELECT * FROM stations').then(results => {
     res.json(results)
@@ -47,8 +48,8 @@ app.get('/getUserId/:username',
   passport.authenticate('basic', { session: false }),
   (req, res) => {
     db.query('select idUser from users where username = ?', [req.params.username])
-    .then(dbRes => res.send(dbRes))
-    .catch(dbEr => console.log(dbEr))
+      .then(dbRes => res.send(dbRes))
+      .catch(dbEr => console.log(dbEr))
   });
 
 app.get('/signIn',
@@ -59,10 +60,9 @@ app.get('/history/:idUser',
   passport.authenticate('basic', { session: false }),
   (req, res) => {
     db.query('SELECT charging.idCharging, charging.timeOfUsage, charging.cost, stations.type, charging.energy, charging.timeOfStart, stations.UUID  from charging inner join stations on charging.stationId = stations.stationId where idUser = ?', [req.params.idUser])
-    .then(dbResults => {
-      res.send(dbResults)
-    }).catch(dbEr => console.log(dbEr))
-    
+      .then(dbResults => {
+        res.send(dbResults)
+      }).catch(dbEr => console.log(dbEr))
   })
 
 app.get('/stopCharging/:idCharging',
@@ -96,18 +96,18 @@ app.get('/startCharging/:UUID',
       }
     }).catch(dbError => console.log(dbError))
   })
-  
+
 app.get('/chargingProcess/:idCharging', passport.authenticate('basic', { session: false }),
   (req, res) => {
     db.query('SELECT charging.idCharging, stations.power, charging.stationId, stations.price, stations.type, TIMESTAMPDIFF(MINUTE, timeOfStart, CURRENT_TIMESTAMP()) as time from charging inner join stations on charging.stationId = stations.stationId where idCharging = ?', [req.params.idCharging]).then(dbResults => {
       if (dbResults[0].type == "Fast") {
         let currentCost = dbResults[0].time / 60 * dbResults[0].power * dbResults[0].price;
-        db.query('UPDATE `charging` SET `cost` = ?, `timeOfUsage` = ?, `energy` = ? WHERE `charging`.`idCharging` = ?', [currentCost, dbResults[0].time, dbResults[0].time / 60 * dbResults[0].power, req.params.idCharging ])
+        db.query('UPDATE `charging` SET `cost` = ?, `timeOfUsage` = ?, `energy` = ? WHERE `charging`.`idCharging` = ?', [currentCost, dbResults[0].time, dbResults[0].time / 60 * dbResults[0].power, req.params.idCharging])
           .then()
           .catch(dbEr => console.log(dbEr))
       } else {
         let currentCost = dbResults[0].time * dbResults[0].price;
-        db.query('UPDATE `charging` SET `cost` = ?, `timeOfUsage` = ?, `energy` = ? WHERE `charging`.`idCharging` = ?', [currentCost, dbResults[0].time * 1, dbResults[0].time / 60 * dbResults[0].power, req.params.idCharging, ])
+        db.query('UPDATE `charging` SET `cost` = ?, `timeOfUsage` = ?, `energy` = ? WHERE `charging`.`idCharging` = ?', [currentCost, dbResults[0].time * 1, dbResults[0].time / 60 * dbResults[0].power, req.params.idCharging,])
           .then()
           .catch(dbEr => console.log(dbEr))
       }
@@ -140,6 +140,19 @@ app.post('/signUp', (req, res) => {
   }
 });
 
+app.post('/addData', (req, res) => {
+  let data = req.body;
+  Promise.all([
+    data.forEach(element => {
+      db.query('INSERT INTO stations (stationName, address, lat, lng, type, power, price, measure, UUID) VALUES (?,?,?,?,?,?,?,?,?)', [element.stationName, element.address, element.lat, element.lng, element.type, element.power, element.price, element.measure, element.UUID])
+    })]
+  ).then((response) => {
+    res.send('succesfull');
+  })
+    .catch((err) => {
+      console.log(err);
+    })
+});
 
 Promise.all(
   [
@@ -155,20 +168,5 @@ Promise.all(
     console.log('Listening to port ', port)
 
   });
-}).catch( dbEr => console.log(dbEr));
+}).catch(dbEr => console.log(dbEr));
 
-app.post('/addData', (req, res) => {
-  //  отправлять промисы после выполнения лупы
-  let data = req.body;
-  Promise.all([
-    data.forEach(element => {
-      db.query('INSERT INTO stations (stationName, address, lat, lng, type, power, price, measure, UUID) VALUES (?,?,?,?,?,?,?,?,?)', [element.stationName, element.address, element.lat, element.lng, element.type, element.power, element.price, element.measure, element.UUID])
-    })]
-  ).then((response) => {
-    res.send('succesfull');
-  })
-    .catch((err) => {
-      console.log(err);
-      // res.send(err);
-    })
-});

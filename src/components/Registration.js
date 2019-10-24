@@ -2,36 +2,33 @@ import React from 'react'
 import styles from './Main.module.css';
 
 export default function Register(props) {
-  function register(event)
-  {
-    event.preventDefault();
-    if ( event.target['password'].value !==  event.target['password1'].value) {
-    } else {
-        props.register(
-            event.target['username'].value,
-            event.target['email'].value,
-            event.target['password'].value,
-          );
-          if ( props.message === "Created")
-          props.history.goBack();
-    }
-    
-  }
- 
 
-  function cancel(event)
-  {
+  function register(event) {
+    event.preventDefault();
+    if (event.target['password'].value !== event.target['password1'].value) {
+    } else {
+      props.register(
+        event.target['username'].value,
+        event.target['email'].value,
+        event.target['password'].value,
+      );
+      if (props.message === "Created")
+        props.history.goBack();
+    }
+  }
+
+  function cancel(event) {
     event.preventDefault();
     props.history.goBack();
-    props.setMessageToNull();  
+    props.setMessageToNull();
   }
 
   return (
-    <div className = { styles.generalGrid, styles.registration}>
-      <form   onSubmit={ register }>
-      <h2>Registration</h2> 
+    <div className={styles.generalGrid, styles.registration}>
+      <form onSubmit={register}>
+        <h2>Registration</h2>
         <div>
-         Username
+          Username
         </div>
         <input type="text" name="username" />
         <div>
@@ -47,12 +44,10 @@ export default function Register(props) {
         </div>
         <input type="password" name="password1" />
         <br></br>
-        <button className = { styles.cancelButton } onClick={ cancel }>Back</button>
-        <button className = { styles.proceedButton } type="submit">Register</button>
-        <div id = "message" > { props.message } </div>
+        <button className={styles.cancelButton} onClick={cancel}>Back</button>
+        <button className={styles.proceedButton} type="submit">Register</button>
+        <div id="message" > {(props.message === "Incorrect username or password") ? "" : props.message} </div>
       </form>
-     
-        
     </div>
   )
 }
