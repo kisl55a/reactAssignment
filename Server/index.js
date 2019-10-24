@@ -44,6 +44,7 @@ app.get('/getData', (req, res) => {
       res.sendStatus(500);
     })
 });
+
 app.get('/getUserId/:username',
   passport.authenticate('basic', { session: false }),
   (req, res) => {
