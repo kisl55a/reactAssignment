@@ -2,7 +2,6 @@ import React from 'react'
 import styles from './Main.module.css';
 
 export default function Login(props) {
-
   function login(event) {
     event.preventDefault();
     props.login(
@@ -18,7 +17,6 @@ export default function Login(props) {
   }
 
   return (
-     // eslint-disable-next-line
     <div className={styles.generalGrid, styles.registration}>
       <h2> Login </h2>
       <form onSubmit={login}>

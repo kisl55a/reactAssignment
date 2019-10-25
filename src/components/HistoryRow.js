@@ -1,6 +1,6 @@
 import React from 'react';
-export default function HistoryRow(props) {
 
+export default function HistoryRow(props) {
     return (
         <tr>
             <th>{props.UUID}</th>

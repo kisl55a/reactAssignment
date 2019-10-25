@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './Main.module.css';
-export default function Charging(props) {
 
+export default function Charging(props) {
   function startCharging(event) {
     event.preventDefault();
     props.startCharging(

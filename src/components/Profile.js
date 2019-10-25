@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './Main.module.css';
 import HistoryRow from './HistoryRow'
-export default function Login(props) {
+export default function Profile(props) {
 
   function cancel(event) {
     event.preventDefault();

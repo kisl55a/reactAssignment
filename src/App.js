@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route } from "react-router-dom";
+
 import GoogleMapReact from 'google-map-react';
 import Marker from './components/Marker';
 import axios from 'axios';
 import styles from './components/Main.module.css';
-import { BrowserRouter as Router, Route } from "react-router-dom";
 import MainPage from './components/MainPage';
 import Login from './components/Login';
 import Registration from './components/Registration';
 import StationInfo from './components/StationInfo';
 import Profile from './components/Profile';
+const API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
 
 export default class App extends Component {
   constructor(props) {
@@ -39,7 +41,7 @@ export default class App extends Component {
   };
   
   componentDidMount = () => {
-    axios.get('http://localhost:4000/getData').then(result => {
+    axios.get('http://ec2-3-84-220-144.compute-1.amazonaws.com/getData').then(result => {
       this.setState({ Markers: result.data })
       this.setState({ arr: result.data })
     })
@@ -60,7 +62,7 @@ export default class App extends Component {
   }
 
   login = (username, password) => {
-    axios.get('http://localhost:4000/signIn', {
+    axios.get('http://ec2-3-84-220-144.compute-1.amazonaws.com/signIn', {
       auth: {
         username: username,
         password: password
@@ -73,7 +75,7 @@ export default class App extends Component {
             username: username,
             password: password
           })
-          axios.get(`http://localhost:4000/getUserId/${username}`, {
+          axios.get(`http://ec2-3-84-220-144.compute-1.amazonaws.com/getUserId/${username}`, {
             auth: {
               username: username,
               password: password
@@ -98,7 +100,7 @@ export default class App extends Component {
 
   register = (username, email, password) => {
     console.log(email, password, username)
-    axios.post('http://localhost:4000/signUp', {
+    axios.post('http://ec2-3-84-220-144.compute-1.amazonaws.com/signUp', {
       username: username,
       email: email,
       password: password
@@ -137,7 +139,7 @@ export default class App extends Component {
 
   refreshData = () => {
     let frequency = 60;
-    axios.get(`http://localhost:4000/chargingProcess/${this.state.idCharging}`, {
+    axios.get(`http://ec2-3-84-220-144.compute-1.amazonaws.com/chargingProcess/${this.state.idCharging}`, {
       auth: {
         username: this.state.username,
         password: this.state.password,
@@ -154,7 +156,7 @@ export default class App extends Component {
   }
 
   getUserHistory = () => {
-    axios.get(`http://localhost:4000/history/${this.state.idUser}`, {
+    axios.get(`http://ec2-3-84-220-144.compute-1.amazonaws.com/history/${this.state.idUser}`, {
       auth: {
         username: this.state.username,
         password: this.state.password,
@@ -167,7 +169,7 @@ export default class App extends Component {
 
   stopCharging = () => {
     this.setState({ isCharging: false })
-    axios.get(`http://localhost:4000/stopCharging/${this.state.idCharging}`, {
+    axios.get(`http://ec2-3-84-220-144.compute-1.amazonaws.com/stopCharging/${this.state.idCharging}`, {
       auth: {
         username: this.state.username,
         password: this.state.password,
@@ -183,7 +185,7 @@ export default class App extends Component {
     if (UUID === "") {
       UUID = 0
     }
-    axios.get(`http://localhost:4000/startCharging/${UUID}`, {
+    axios.get(`http://ec2-3-84-220-144.compute-1.amazonaws.com/startCharging/${UUID}`, {
       auth: {
         username: this.state.username,
         password: this.state.password,

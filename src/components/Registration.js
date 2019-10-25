@@ -24,7 +24,6 @@ export default function Register(props) {
   }
 
   return (
-     // eslint-disable-next-line
     <div className={styles.generalGrid, styles.registration}>
       <form onSubmit={register}>
         <h2>Registration</h2>
