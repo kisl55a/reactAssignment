@@ -2,10 +2,14 @@ let mysql = require('mysql');
 let pool = null;
 try {
   pool  = mysql.createPool({
-    connectionLimit : 10,
-    host            : 'localhost',
-    user            : 'root',
-    password        : 'root',
+    connectionLimit : 1000,
+    connectTimeout  : 60 * 60 * 1000,
+    acquireTimeout  : 60 * 60 * 1000,
+    timeout         : 60 * 60 * 1000,
+    port: 3306,
+    host            : 'database-2.ckqfrbqbybou.us-east-1.rds.amazonaws.com',
+    user            : 'admin',
+    password        : 'adminadmin',
     database        : 'map'
   });
   
