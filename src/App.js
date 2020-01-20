@@ -41,7 +41,7 @@ export default class App extends Component {
   };
   
   componentDidMount = () => {
-    axios.get('http://ec2-3-92-231-143.compute-1.amazonaws.com:4000/getData').then(result => {
+    axios.get('https://sleepy-everglades-43480.herokuapp.com/getData').then(result => {
       this.setState({ Markers: result.data })
       this.setState({ arr: result.data })
     })
@@ -62,7 +62,7 @@ export default class App extends Component {
   }
 
   login = (username, password) => {
-    axios.get('http://ec2-3-92-231-143.compute-1.amazonaws.com:4000/signIn', {
+    axios.get('https://sleepy-everglades-43480.herokuapp.com/signIn', {
       auth: {
         username: username,
         password: password
@@ -75,7 +75,7 @@ export default class App extends Component {
             username: username,
             password: password
           })
-          axios.get(`http://ec2-3-92-231-143.compute-1.amazonaws.com:4000/getUserId/${username}`, {
+          axios.get(`https://sleepy-everglades-43480.herokuapp.com/getUserId/${username}`, {
             auth: {
               username: username,
               password: password
@@ -100,7 +100,7 @@ export default class App extends Component {
 
   register = (username, email, password) => {
     console.log(email, password, username)
-    axios.post('http://ec2-3-92-231-143.compute-1.amazonaws.com:4000/signUp', {
+    axios.post('https://sleepy-everglades-43480.herokuapp.com/signUp', {
       username: username,
       email: email,
       password: password
@@ -139,7 +139,7 @@ export default class App extends Component {
 
   refreshData = () => {
     let frequency = 60;
-    axios.get(`http://ec2-3-92-231-143.compute-1.amazonaws.com:4000/chargingProcess/${this.state.idCharging}`, {
+    axios.get(`https://sleepy-everglades-43480.herokuapp.com/chargingProcess/${this.state.idCharging}`, {
       auth: {
         username: this.state.username,
         password: this.state.password,
@@ -156,7 +156,7 @@ export default class App extends Component {
   }
 
   getUserHistory = () => {
-    axios.get(`http://ec2-3-92-231-143.compute-1.amazonaws.com:4000/history/${this.state.idUser}`, {
+    axios.get(`https://sleepy-everglades-43480.herokuapp.com/history/${this.state.idUser}`, {
       auth: {
         username: this.state.username,
         password: this.state.password,
@@ -169,7 +169,7 @@ export default class App extends Component {
 
   stopCharging = () => {
     this.setState({ isCharging: false })
-    axios.get(`http://ec2-3-92-231-143.compute-1.amazonaws.com:4000/stopCharging/${this.state.idCharging}`, {
+    axios.get(`https://sleepy-everglades-43480.herokuapp.com/stopCharging/${this.state.idCharging}`, {
       auth: {
         username: this.state.username,
         password: this.state.password,
@@ -185,7 +185,7 @@ export default class App extends Component {
     if (UUID === "") {
       UUID = 0
     }
-    axios.get(`http://ec2-3-92-231-143.compute-1.amazonaws.com:4000/startCharging/${UUID}`, {
+    axios.get(`https://sleepy-everglades-43480.herokuapp.com/startCharging/${UUID}`, {
       auth: {
         username: this.state.username,
         password: this.state.password,
