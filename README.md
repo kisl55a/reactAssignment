@@ -1,4 +1,4 @@
-<h3>You can read a small description to this project [here](https://oamk-my.sharepoint.com/:w:/g/personal/t8kidm00_students_oamk_fi/ETidI9wPo61NtLfE3DJfAQQBkAnO0672O4WNWgwKGC9CRQ?e=Y8drFw).</h3> <br>
+<h3>You can read a small description to this project <a href="https://oamk-my.sharepoint.com/:w:/g/personal/t8kidm00_students_oamk_fi/ETidI9wPo61NtLfE3DJfAQQBkAnO0672O4WNWgwKGC9CRQ?e=Y8drFw">here</a>.</h3> <br>
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
