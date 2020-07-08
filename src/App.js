@@ -122,8 +122,8 @@ export default class App extends Component {
     // ( this.state.arr.length != 0) ? this.setState( {showSearchResults: true}) : this.setState( {showSearchResults: false})
   }
 
-  setCurrentStation = (currentStation) => {
-    this.setState({
+  setCurrentStation = async (currentStation) => {
+    await this.setState({
       currentMarker: currentStation,
       center: {
         lat: currentStation.lat,
@@ -167,16 +167,17 @@ export default class App extends Component {
 
   }
 
-  stopCharging = () => {
-    this.setState({ isCharging: false })
+  stopCharging = async () => {
+    await this.setState({ isCharging: false })
     axios.get(`https://sleepy-everglades-43480.herokuapp.com/stopCharging/${this.state.idCharging}`, {
       auth: {
         username: this.state.username,
         password: this.state.password,
       },
     })
-      .then(response => {
-        this.componentDidMount();
+      .then(async(response) => {
+        console.log('response: ', response);
+       await this.componentDidMount();
       })
       .catch(error => console.log(error))
   }
@@ -192,9 +193,9 @@ export default class App extends Component {
       },
     })
       .then(
-        response => {
+       async (response) => {
           if (response.data !== false) {
-            this.setState(
+            await this.setState(
               {
                 isCharging: true,
                 UUID: UUID,
@@ -202,10 +203,10 @@ export default class App extends Component {
                 noChargerNotification: ""
               }
             )
-            this.refreshData();
-            this.componentDidMount();
+            await this.refreshData();
+            await this.componentDidMount();
           } else {
-            this.setState({
+            await this.setState({
               noChargerNotification: "No charger with such ID or it's taken already"
             })
           }
@@ -284,7 +285,7 @@ export default class App extends Component {
         <div className = {styles.map}>
           <GoogleMapReact
             center={this.state.center}
-            bootstrapURLKeys={{ key: "AIzaSyBQc4fDzvIrxXU2Md73EjyY6oXWspFCMSY" }}
+            bootstrapURLKeys={{ key: process.env.REACT_APP_MAPS_API }}
             zoom={this.state.zoom}
             onChildClick={this._onChildClick}
           >
